@@ -42,7 +42,7 @@ const App: React.FC = () => {
   const profitPerHour = 1;
 const [userName] = React.useState(() => {
     const tgUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
-    return tgUser?.first_name ? ${tgUser.first_name} (CEO) : "Nikandr (CEO)";
+    return tgUser?.first_name ? ${tgUser.first_name} (CEO) : "Xurshed";
   });
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
