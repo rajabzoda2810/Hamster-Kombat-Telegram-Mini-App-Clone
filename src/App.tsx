@@ -45,7 +45,7 @@ const [userName] = React.useState(() => {
     const firstName = tg?.initDataUnsafe?.user?.first_name;
     
     if (firstName) {
-      return ${firstName} (CEO);
+      return `${firstName} (CEO)`;
     }
     return "Nikandr (CEO)";
   });
