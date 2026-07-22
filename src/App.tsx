@@ -41,21 +41,9 @@ const App: React.FC = () => {
   const pointsToAdd = 1;
   const profitPerHour = 1;
 const [userName] = React.useState(() => {
-    const tg = (window as any).Telegram?.WebApp;
-    // Пробуем разные способы достать имя из Telegram WebApp
-    const user = tg?.initDataUnsafe?.user;
-    
-    if (user && user.first_name) {
-      return user.first_name;
-    }
-    
-    // Если объект пустой, проверяем, есть ли хотя бы строка инициализации
-    if (tg?.initData) {
-      return "TG WebApp Активен";
-    }
-    
-    return "Xurshed";
-  });
+  const tgUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
+  return tgUser?.first_name ? ${tgUser.first_name} (CEO) : "Nikandr (CEO)";
+});
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
