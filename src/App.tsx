@@ -23,7 +23,7 @@ const App: React.FC = () => {
   ];
 
   const levelMinPoints = [
-    0,        // Bronze
+    0,        // lox
     5000,     // Silver
     25000,    // Gold
     100000,   // Platinum
