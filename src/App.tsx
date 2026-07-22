@@ -40,7 +40,10 @@ const App: React.FC = () => {
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
-
+const [userName, setUserName] = React.useState(() => {
+    const tgUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
+    return tgUser ? ${tgUser.first_name} (Builder) : "Nikandr (CEO)";
+  });
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
@@ -139,7 +142,7 @@ const App: React.FC = () => {
               <Hamster size={24} className="text-[#d4d4d4]" />
             </div>
             <div>
-              <p className="text-sm">Nikandr (CEO)</p>
+              <p className="text-sm">{userName}</p>
             </div>
           </div>
           <div className="flex items-center justify-between space-x-4 mt-1">
