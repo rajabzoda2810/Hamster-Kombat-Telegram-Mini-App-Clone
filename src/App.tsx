@@ -40,19 +40,33 @@ const App: React.FC = () => {
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
-const [userName, setUserName] = React.useState("Загрузка...");
-
-  React.useEffect(() => {
+const [userName, setUserName] = React.useState(() => {
     const tg = (window as any).Telegram?.WebApp;
-    tg?.ready?.();
     
-    const firstName = tg?.initDataUnsafe?.user?.first_name;
-    if (firstName) {
-      setUserName(firstName + " (CEO)");
-    } else {
-      setUserName("Игрок (CEO)");
+    // Пытаемся достать данные из initData или initDataUnsafe
+    const user = tg?.initDataUnsafe?.user;
+    if (user?.first_name) {
+      return user.first_name + " (CEO)";
     }
-  }, []);
+    
+    // Если через официальный объект не вышло, пробуем распарсить строку инициализации
+    try {
+      const initData = tg?.initData || "";
+      const urlParams = new URLSearchParams(initData);
+      const userStr = urlParams.get("user");
+      if (userStr) {
+        const userData = JSON.parse(userStr);
+        if (userData?.first_name) {
+          return userData.first_name + " (CEO)";
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Если совсем ничего нет — выведем имя вашего второго аккаунта или кастомное
+    return "Джек Ричард (CEO)";
+  });
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
