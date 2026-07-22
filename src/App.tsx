@@ -44,11 +44,13 @@ const [userName] = React.useState(() => {
     const tg = (window as any).Telegram?.WebApp;
     const user = tg?.initDataUnsafe?.user;
     
+    // Если Telegram передал имя игрока, берем его
     if (user?.first_name) {
       return user.first_name + " (CEO)";
     }
     
-    return "Nikandr (CEO)";
+    // Если по какой-то причине имени нет
+    return "CEO";
   });
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
