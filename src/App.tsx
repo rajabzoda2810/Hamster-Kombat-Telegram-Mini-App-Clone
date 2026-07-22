@@ -44,19 +44,11 @@ const [userName] = React.useState(() => {
     const tg = (window as any).Telegram?.WebApp;
     const user = tg?.initDataUnsafe?.user;
     
-    console.log("Telegram WebApp object:", tg);
-    console.log("Telegram User object:", user);
-
     if (user?.first_name) {
       return user.first_name + " (CEO)";
     }
     
-    // Если имя не пришло, покажем причину прямо на экране вместо "Nikandr"
-    if (!tg?.initData) {
-      return "Откройте в Telegram!";
-    }
-    
-    return "Нет имени в профиле";
+    return "Nikandr (CEO)";
   });
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
