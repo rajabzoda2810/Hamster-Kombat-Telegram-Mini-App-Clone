@@ -41,13 +41,12 @@ const App: React.FC = () => {
   const pointsToAdd = 1;
   const profitPerHour = 1;
 const [userName] = React.useState(() => {
-    const tgUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
-    if (tgUser && tgUser.first_name) {
-      return ${tgUser.first_name} (Builder);
-    } else {
-      return "НЕТ TELEGRAM API";
-    }
-  });
+  const tg = (window as any).Telegram?.WebApp;
+  if (!tg || !tg.initDataUnsafe?.user) {
+    return "НЕТ TELEGRAM";
+  }
+  return tg.initDataUnsafe.user.first_name;
+});
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
