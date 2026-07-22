@@ -47,7 +47,7 @@ const [userName] = React.useState(() => {
     if (firstName) {
       return firstName + " (CEO)";
     }
-    return "Nikandr (CEO)";
+    return "Rajabzoda X. (CEO)";
   });
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
