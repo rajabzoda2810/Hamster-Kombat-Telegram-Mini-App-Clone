@@ -48,14 +48,15 @@ const [userName, setUserName] = React.useState("Загрузка...");
       tg?.ready?.();
       
       const user = tg?.initDataUnsafe?.user;
-      if (user?.first_name) {
-        setUserName(user.first_name + " (CEO)");
+      
+      // Выведем весь объект user на экран в виде текста, чтобы проверить его содержимое
+      if (user) {
+        setUserName(JSON.stringify(user));
       } else {
-        // Если объект Telegram есть, но имя не нашлось
-        setUserName("Игрок (CEO)");
+        setUserName("Объект user пустой");
       }
-    } catch (e) {
-      setUserName("Rajabzoda X. (CEO)");
+    } catch (e: any) {
+      setUserName("Ошибка: " + e.message);
     }
   }, []);
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
