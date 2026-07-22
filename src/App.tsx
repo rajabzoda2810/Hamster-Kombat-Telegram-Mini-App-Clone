@@ -40,20 +40,24 @@ const App: React.FC = () => {
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
-const [userName] = React.useState(() => {
-    const tg = (window as any).Telegram?.WebApp;
-    
-    // Если объект Telegram вообще не найден
-    if (!tg) return "user.first_name";
-    
-    // Если объект есть, но данных о пользователе нет
-    if (!tg.initDataUnsafe?.user) {
-      return "Данные initDataUnsafe пустые!";
+const [userName, setUserName] = React.useState("Загрузка...");
+
+  React.useEffect(() => {
+    try {
+      const tg = (window as any).Telegram?.WebApp;
+      tg?.ready?.();
+      
+      const user = tg?.initDataUnsafe?.user;
+      if (user?.first_name) {
+        setUserName(user.first_name + " (CEO)");
+      } else {
+        // Если объект Telegram есть, но имя не нашлось
+        setUserName("Игрок (CEO)");
+      }
+    } catch (e) {
+      setUserName("Rajabzoda X. (CEO)");
     }
-    
-    // Если всё есть — выводим имя
-    return (tg.initDataUnsafe.user.first_name || "Нет имени") + " (CEO)";
-  });
+  }, []);
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
