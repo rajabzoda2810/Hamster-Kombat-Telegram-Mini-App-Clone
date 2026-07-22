@@ -40,18 +40,19 @@ const App: React.FC = () => {
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
-const [userName] = React.useState(() => {
+const [userName, setUserName] = React.useState("Загрузка...");
+
+  React.useEffect(() => {
     const tg = (window as any).Telegram?.WebApp;
-    const user = tg?.initDataUnsafe?.user;
+    tg?.ready?.();
     
-    // Если Telegram передал имя игрока, берем его
-    if (user?.first_name) {
-      return user.first_name + " (CEO)";
+    const firstName = tg?.initDataUnsafe?.user?.first_name;
+    if (firstName) {
+      setUserName(firstName + " (CEO)");
+    } else {
+      setUserName("Игрок (CEO)");
     }
-    
-    // Если по какой-то причине имени нет
-    return "CEO";
-  });
+  }, []);
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
