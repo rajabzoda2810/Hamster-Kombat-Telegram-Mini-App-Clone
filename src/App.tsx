@@ -41,8 +41,18 @@ const App: React.FC = () => {
   const pointsToAdd = 1;
   const profitPerHour = 1;
 const [userName] = React.useState(() => {
-    // Впишите сюда любое имя, которое хотите видеть в игре
-    return "Rajabzoda.X (CEO)";
+    const tg = (window as any).Telegram?.WebApp;
+    
+    // Если объект Telegram вообще не найден
+    if (!tg) return "Ошибка: не Telegram WebApp";
+    
+    // Если объект есть, но данных о пользователе нет
+    if (!tg.initDataUnsafe?.user) {
+      return "Данные initDataUnsafe пустые!";
+    }
+    
+    // Если всё есть — выводим имя
+    return (tg.initDataUnsafe.user.first_name || "Нет имени") + " (CEO)";
   });
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
