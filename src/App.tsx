@@ -44,7 +44,7 @@ const [userName] = React.useState(() => {
     const tg = (window as any).Telegram?.WebApp;
     
     // Если объект Telegram вообще не найден
-    if (!tg) return "Ошибка: не Telegram WebApp";
+    if (!tg) return "user.first_name";
     
     // Если объект есть, но данных о пользователе нет
     if (!tg.initDataUnsafe?.user) {
