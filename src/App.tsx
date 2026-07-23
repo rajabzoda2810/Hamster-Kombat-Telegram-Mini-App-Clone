@@ -40,16 +40,18 @@ const telegramUser = tg?.initDataUnsafe?.user;
 
 const telegramId = telegramUser?.id;
 
-console.log("Telegram user:", telegramUser);;
-  const [levelIndex, setLevelIndex] = useState(6);
-  const [points, setPoints] = useState(1);
-  const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
-  const pointsToAdd = 1;
-  const profitPerHour = 1;
+console.log("Telegram user:", telegramUser);
 
-  const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
-  const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
-  const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
+
+const [levelIndex, setLevelIndex] = useState(6);
+const [points, setPoints] = useState(1);
+const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
+
+const pointsToAdd = 1;
+const profitPerHour = 1;
+
+
+// Загрузка прогресса
 useEffect(() => {
   if (!telegramId) return;
 
@@ -65,6 +67,11 @@ useEffect(() => {
 
     console.log("Прогресс загружен:", data);
   }
+
+}, [telegramId]);
+
+
+// Сохранение прогресса
 useEffect(() => {
   if (!telegramId) return;
 
@@ -79,7 +86,6 @@ useEffect(() => {
   console.log("Прогресс сохранён");
 
 }, [points, levelIndex, telegramId]);
-}, [telegramId]);
   const calculateTimeLeft = (targetHour: number) => {
     const now = new Date();
     const target = new Date(now);
