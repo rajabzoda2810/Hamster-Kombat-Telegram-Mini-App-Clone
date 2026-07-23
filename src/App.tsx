@@ -24,7 +24,7 @@ const App: React.FC = () => {
 
   const levelMinPoints = [
     0,        // lox
-    5000,     // Silver
+   20,     // Silver
     25000,    // Gold
     100000,   // Platinum
     1000000,  // Diamond
