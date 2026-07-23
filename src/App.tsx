@@ -43,7 +43,7 @@ const App: React.FC = () => {
   React.useEffect(() => {
     localStorage.setItem("rx_empire_points", points.toString());
   }, [points]);
-  const [points, setPoints] = useState(1);
+  
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
