@@ -47,18 +47,25 @@ const [points, setPoints] = React.useState<number>(() => {
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
-const [userName, setUserName] = React.useState<string>("Rajabzoda X. (CEO)");
+const [userName, setUserName] = React.useState("Загрузка...");
 
-React.useEffect(() => {
-  const tg = (window as any).Telegram?.WebApp;
-  if (tg) {
-    tg.ready();
-    const firstName = tg.initDataUnsafe?.user?.first_name;
-    if (firstName) {
-      setUserName(`${firstName} (CEO)`);
+  React.useEffect(() => {
+    try {
+      const tg = (window as any).Telegram?.WebApp;
+      tg?.ready?.();
+      
+      const user = tg?.initDataUnsafe?.user;
+      
+      // Выведем весь объект user на экран в виде текста, чтобы проверить его содержимое
+      if (user) {
+        setUserName(JSON.stringify(user));
+      } else {
+        setUserName("Объект user пустой");
+      }
+    } catch (e: any) {
+      setUserName("Ошибка: " + e.message);
     }
-  }
-}, []);
+  }, []);
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
