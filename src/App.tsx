@@ -66,7 +66,7 @@ const [userName, setUserName] = React.useState("Загрузка...");
   if (tg.initDataUnsafe?.user) {
     setUserName(tg.initDataUnsafe.user.first_name);
   } else {
-    setUserName("Объект user пустой");
+    setUserName("project Rajabzoda X.");
   }
 }, []);
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
