@@ -47,12 +47,28 @@ const [points, setPoints] = React.useState<number>(() => {
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
-const [userName, setUserName] = React.useState<string>(() => {
-  const tg = (window as any).Telegram;
-  const firstName = tg?.initDataUnsafe?.user?.first_name;
-  
-  return firstName ? ${firstName} (CEO) : "Rajabzoda X. (CEO)";
-});
+const [userName, setUserName] = React.useState<string>("Загрузка...");
+
+React.useEffect(() => {
+  const checkTelegramUser = () => {
+    const tg = (window as any).Telegram?.WebApp;
+    const firstName = tg?.initDataUnsafe?.user?.first_name;
+
+    if (firstName) {
+      setUserName(`${firstName} (CEO)`);
+    } else {
+      // Если объект user всё еще пустой, ставим fallback
+      setUserName("Rajabzoda X. (CEO)");
+    }
+  };
+
+  // Проверяем сразу
+  checkTelegramUser();
+
+  // И на всякий случай делаем короткую задержку, так как Telegram WebApp API иногда отдаёт данные с запозданием
+  const timer = setTimeout(checkTelegramUser, 300);
+  return () => clearTimeout(timer);
+}, []);
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
