@@ -10,8 +10,8 @@ import Coins from './icons/Coins';
 
 const App: React.FC = () => {
   const levelNames = [
-    "raznarabochi",    // From 0 to 19 coins
-    "Silver",    // From 20 coins to 24,999 coins
+    "Bronze",    // From 0 to 4999 coins
+    "Silver",    // From 5000 coins to 24,999 coins
     "Gold",      // From 25,000 coins to 99,999 coins
     "Platinum",  // From 100,000 coins to 999,999 coins
     "Diamond",   // From 1,000,000 coins to 2,000,000 coins
@@ -23,8 +23,8 @@ const App: React.FC = () => {
   ];
 
   const levelMinPoints = [
-    0,        // raznarabochi
-   20,     // Silver
+    0,        // Bronze
+    5000,     // Silver
     25000,    // Gold
     100000,   // Platinum
     1000000,  // Diamond
@@ -35,36 +35,12 @@ const App: React.FC = () => {
     1000000000// Lord
   ];
 
-const [points, setPoints] = React.useState<number>(() => {
-    const saved = localStorage.getItem("rx_empire_points");
-    return saved !== null ? Number(saved) : 1;
-  });
-
-  React.useEffect(() => {
-    localStorage.setItem("rx_empire_points", String(points));
-  }, [points]);
-  
+  const [levelIndex, setLevelIndex] = useState(6);
+  const [points, setPoints] = useState(22749365);
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
-  const pointsToAdd = 1;
-  const profitPerHour = 1;
-const [userName, setUserName] = React.useState("Загрузка...");
+  const pointsToAdd = 11;
+  const profitPerHour = 126420;
 
-  React.useEffect(() => {
-    try {
-      const tg = (window as any).Telegram?.WebApp;
-      tg?.ready?.();
-      
-      const user = tg?.initDataUnsafe?.user;
-      if (user?.first_name) {
-        setUserName(user.first_name + " (CEO)");
-      } else {
-        // Если объект Telegram есть, но имя не нашлось
-        setUserName("Игрок (CEO)");
-      }
-    } catch (e) {
-      setUserName("Джек Ричард (CEO)");
-    }
-  }, []);
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
@@ -163,7 +139,7 @@ const [userName, setUserName] = React.useState("Загрузка...");
               <Hamster size={24} className="text-[#d4d4d4]" />
             </div>
             <div>
-              <p className="text-sm">{userName}</p>
+              <p className="text-sm">Nikandr (CEO)</p>
             </div>
           </div>
           <div className="flex items-center justify-between space-x-4 mt-1">
