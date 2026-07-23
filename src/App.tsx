@@ -34,7 +34,9 @@ const App: React.FC = () => {
     100000000,// GrandMaster
     1000000000// Lord
   ];
-
+const tg = window.Telegram.WebApp;
+const telegramUser = tg.initDataUnsafe.user;
+const telegramId = telegramUser?.id;
   const [levelIndex, setLevelIndex] = useState(6);
   const [points, setPoints] = useState(1);
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
