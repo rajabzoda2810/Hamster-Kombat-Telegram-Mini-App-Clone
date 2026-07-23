@@ -34,9 +34,13 @@ const App: React.FC = () => {
     100000000,// GrandMaster
     1000000000// Lord
   ];
-const tg = window.Telegram.WebApp;
-const telegramUser = tg.initDataUnsafe.user;
+const tg = window.Telegram?.WebApp;
+
+const telegramUser = tg?.initDataUnsafe?.user;
+
 const telegramId = telegramUser?.id;
+
+console.log("Telegram user:", telegramUser);;
   const [levelIndex, setLevelIndex] = useState(6);
   const [points, setPoints] = useState(1);
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
@@ -46,7 +50,36 @@ const telegramId = telegramUser?.id;
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
+useEffect(() => {
+  if (!telegramId) return;
 
+  const saved = localStorage.getItem(
+    `player_${telegramId}`
+  );
+
+  if (saved) {
+    const data = JSON.parse(saved);
+
+    setPoints(data.points);
+    setLevelIndex(data.levelIndex);
+
+    console.log("Прогресс загружен:", data);
+  }
+useEffect(() => {
+  if (!telegramId) return;
+
+  localStorage.setItem(
+    `player_${telegramId}`,
+    JSON.stringify({
+      points,
+      levelIndex
+    })
+  );
+
+  console.log("Прогресс сохранён");
+
+}, [points, levelIndex, telegramId]);
+}, [telegramId]);
   const calculateTimeLeft = (targetHour: number) => {
     const now = new Date();
     const target = new Date(now);
