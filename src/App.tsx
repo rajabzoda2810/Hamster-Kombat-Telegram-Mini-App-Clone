@@ -47,18 +47,12 @@ const [points, setPoints] = React.useState<number>(() => {
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
-const [userName, setUserName] = React.useState("Игрок");
-
-React.useEffect(() => {
+const [userName, setUserName] = React.useState<string>(() => {
   const tg = (window as any).Telegram;
   const firstName = tg?.initDataUnsafe?.user?.first_name;
-
-  if (firstName) {
-    setUserName(`${firstName} (CEO)`);
-  } else {
-    setUserName("Rajabzoda X. (CEO)"); // Или резервное имя
-  }
-}, []);
+  
+  return firstName ? ${firstName} (CEO) : "Rajabzoda X. (CEO)";
+});
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
