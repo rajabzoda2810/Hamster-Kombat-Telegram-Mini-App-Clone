@@ -42,23 +42,26 @@ const App: React.FC = () => {
   const profitPerHour = 1;
 const [userName, setUserName] = React.useState("Загрузка...");
 
-  React.useEffect(() => {
-    try {
-      const tg = (window as any).Telegram?.WebApp;
-      tg?.ready?.();
-      
-      const user = tg?.initDataUnsafe?.user;
-      
-      // Выведем весь объект user на экран в виде текста, чтобы проверить его содержимое
-      if (user) {
-        setUserName(JSON.stringify(user));
-      } else {
-        setUserName("Объект user пустой");
-      }
-    } catch (e: any) {
-      setUserName("Ошибка: " + e.message);
-    }
-  }, []);
+  useEffect(() => {
+  const tg = window.Telegram?.WebApp;
+
+  if (!tg) {
+    console.log("Telegram SDK не найден");
+    return;
+  }
+
+  tg.ready();
+  tg.expand();
+
+  console.log("initData =", tg.initData);
+  console.log("initDataUnsafe =", tg.initDataUnsafe);
+
+  if (tg.initDataUnsafe?.user) {
+    setUserName(tg.initDataUnsafe.user.first_name);
+  } else {
+    setUserName("Объект user пустой");
+  }
+}, []);
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
