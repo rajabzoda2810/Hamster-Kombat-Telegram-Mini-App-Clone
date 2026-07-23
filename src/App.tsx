@@ -10,7 +10,7 @@ import Coins from './icons/Coins';
 
 const App: React.FC = () => {
   const levelNames = [
-    "lox",    // From 0 to 19 coins
+    "raznarabochi",    // From 0 to 19 coins
     "Silver",    // From 20 coins to 24,999 coins
     "Gold",      // From 25,000 coins to 99,999 coins
     "Platinum",  // From 100,000 coins to 999,999 coins
@@ -23,7 +23,7 @@ const App: React.FC = () => {
   ];
 
   const levelMinPoints = [
-    0,        // lox
+    0,        // raznarabochi
    20,     // Silver
     25000,    // Gold
     100000,   // Platinum
