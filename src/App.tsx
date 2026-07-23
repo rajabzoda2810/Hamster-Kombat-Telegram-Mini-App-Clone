@@ -35,13 +35,13 @@ const App: React.FC = () => {
     1000000000// Lord
   ];
 
- const [points, setPoints] = React.useState<number>(() => {
-    const savedPoints = localStorage.getItem("rx_empire_points");
-    return savedPoints ? parseInt(savedPoints, 10) : 1;
+const [points, setPoints] = React.useState<number>(() => {
+    const saved = localStorage.getItem("rx_empire_points");
+    return saved !== null ? Number(saved) : 1;
   });
 
   React.useEffect(() => {
-    localStorage.setItem("rx_empire_points", points.toString());
+    localStorage.setItem("rx_empire_points", String(points));
   }, [points]);
   
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
