@@ -47,28 +47,15 @@ const [points, setPoints] = React.useState<number>(() => {
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const pointsToAdd = 1;
   const profitPerHour = 1;
-const [userName, setUserName] = React.useState("Загрузка...");
-
-  useEffect(() => {
-  const tg = window.Telegram?.WebApp;
-
-  if (!tg) {
-    console.log("Telegram SDK не найден");
-    return;
-  }
-
-  tg.ready();
-  tg.expand();
-
-  console.log("initData =", tg.initData);
-  console.log("initDataUnsafe =", tg.initDataUnsafe);
-
-  if (tg.initDataUnsafe?.user) {
-    setUserName(tg.initDataUnsafe.user.first_name);
-  } else {
-    setUserName("project Rajabzoda X.");
-  }
-}, []);
+const [userName] = React.useState(() => {
+    const tg = (window as any).Telegram?.WebApp;
+    const firstName = tg?.initDataUnsafe?.user?.first_name;
+    
+    if (firstName) {
+      return firstName + " (CEO)";
+    }
+    return "Rajabzoda X. (CEO)";
+  });
   const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
   const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
   const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
