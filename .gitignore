@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build files
+dist/
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Files
+*.log
+*.local
+*.swp
+*.swo

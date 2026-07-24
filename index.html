@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamster Kombat Clone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .hamster-emoji {
+            font-size: 80px;
+            margin: 20px 0;
+            display: block;
+        }
+
+        .status {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .user-info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+            color: #2e7d32;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .score {
+            font-size: 32px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .click-area {
+            width: 150px;
+            height: 150px;
+            margin: 30px auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .click-area:active {
+            transform: scale(0.95);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .info {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Hamster Kombat</h1>
+        <span class="hamster-emoji">🐹</span>
+
+        <div id="userInfo" class="user-info" style="display: none;">
+            <div>👤 <strong>User:</strong> <span id="userName">Unknown</span></div>
+            <div>🆔 <strong>ID:</strong> <span id="userId">-</span></div>
+        </div>
+
+        <div class="status" id="status">
+            ⏳ Initializing Telegram Web App...
+        </div>
+
+        <div class="score">
+            <span id="score">0</span> 🪙
+        </div>
+
+        <div class="click-area" id="clickArea">
+            👊
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="addCoins(100)">+100</button>
+            <button class="btn-primary" onclick="addCoins(1000)">+1000</button>
+            <button class="btn-secondary" onclick="resetScore()">Reset</button>
+        </div>
+
+        <div class="info">
+            Click the circle or use buttons to earn coins!
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Initialize Telegram Web App
+        const tg = window.Telegram.WebApp;
+        
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            
+            const user = tg.initDataUnsafe?.user;
+            const statusEl = document.getElementById('status');
+            
+            if (user) {
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('userName').textContent = user.first_name || 'User';
+                document.getElementById('userId').textContent = user.id || '-';
+                statusEl.textContent = '✅ Connected to Telegram!';
+            } else {
+                statusEl.textContent = '⚠️ Not running in Telegram';
+            }
+        }
+
+        // Score management
+        let score = localStorage.getItem('hamsterScore') ? parseInt(localStorage.getItem('hamsterScore')) : 0;
+        
+        function updateScore() {
+            document.getElementById('score').textContent = score.toLocaleString();
+            localStorage.setItem('hamsterScore', score);
+        }
+
+        function addCoins(amount) {
+            score += amount;
+            updateScore();
+            showFeedback('+' + amount);
+        }
+
+        function resetScore() {
+            if (confirm('Reset score to 0?')) {
+                score = 0;
+                updateScore();
+            }
+        }
+
+        function showFeedback(text) {
+            const feedback = document.createElement('div');
+            feedback.textContent = text;
+            feedback.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 24px;
+                font-weight: bold;
+                color: #667eea;
+                pointer-events: none;
+                animation: float-up 1s ease-out forwards;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float-up {
+                    0% { transform: translate(-50%, -50%); opacity: 1; }
+                    100% { transform: translate(-50%, -150%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => feedback.remove(), 1000);
+        }
+
+        // Click area
+        document.getElementById('clickArea').addEventListener('click', () => {
+            addCoins(1);
+        });
+
+        // Initialize
+        updateScore();
+    </script>
+</body>
+</html>
