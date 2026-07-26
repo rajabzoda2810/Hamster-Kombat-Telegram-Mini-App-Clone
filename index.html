@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RX Empire</title>
-    <!-- Подключаем библиотеку Supabase для таблицы лидеров -->
+    <!-- Подключаем Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -108,7 +108,6 @@
             color: #cbd5e0;
         }
 
-        /* Зона клика и пружинящая анимация */
         #clickArea {
             cursor: pointer;
             display: inline-block;
@@ -133,7 +132,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
-        /* Эффект вылетающей монетки (+1) */
         .floating-number {
             position: absolute;
             font-size: 28px;
@@ -156,7 +154,6 @@
             }
         }
 
-        /* Модальные окна */
         .modal {
             display: none;
             position: fixed;
@@ -236,26 +233,22 @@
             ⏳ Initializing Telegram Web App...
         </div>
 
-        <!-- Баланс с логотипом RX -->
         <div class="score-container">
             <span class="score" id="score">0</span>
             <img src="RX-Empire.png" alt="RX" class="score-icon">
         </div>
     </div>
 
-    <!-- Зона клика с картинкой -->
     <div id="clickArea">
         <img src="RX-Empire.png" alt="RX Empire">
     </div>
 
     <div>
-        <!-- Инфо о конвертации -->
         <div class="user-info" style="background: rgba(255, 255, 255, 0.2); border-left: 4px solid #f6ad55; text-align: left; color: #fff;">
             💰 <strong>Конвертация:</strong> 10 000 монет = 1 Сомони<br>
             <span style="font-size: 11px; color: #e2e8f0;">Обменивай игровые монеты на реальные деньги!</span>
         </div>
 
-        <!-- Четыре кнопки в самом низу в ряд -->
         <div class="button-group">
             <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">👥 Друзья</button>
             <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e;">⭐ Задания</button>
@@ -273,13 +266,10 @@
 <div id="inviteModal" class="modal">
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center; color:#2b6cb0;">🎁 Награды за друзей</h3>
-        
         <div style="background: #eef2f7; padding: 10px; border-radius: 10px; margin-bottom: 12px; text-align: center; font-size: 14px;">
             👥 Приглашено друзей: <strong id="invitedCount" style="color: #2b6cb0;">0</strong>
         </div>
-
         <p style="font-size:12px; color:#666; text-align:center; margin-top:0;">Приглашайте друзей и забирайте бонусы:</p>
-        
         <div id="rewardsList">
             <div class="reward-item"><span>👥 1 друг:</span> <b>+500 монет</b></div>
             <div class="reward-item"><span>👥 2 друга:</span> <b>+1,200 монет</b></div>
@@ -292,7 +282,6 @@
             <div class="reward-item"><span>👥 9 друзей:</span> <b>+22,000 монет</b></div>
             <div class="reward-item"><span>👥 10 друзей:</span> <b>+30,000 монет</b></div>
         </div>
-
         <div style="margin-top: 15px; display: flex; gap: 8px;">
             <button class="btn-primary" onclick="shareInviteLink()" style="background: #3182ce; flex: 1; font-size: 13px;">🔗 Поделиться</button>
             <button class="btn-primary" onclick="closeInviteModal()" style="background: #cbd5e0; color: #333; flex: 1; font-size: 13px;">Закрыть</button>
@@ -305,17 +294,14 @@
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center; color:#d69e2e;">⭐ Доступные задания</h3>
         <p style="font-size:12px; color:#666; text-align:center;">Выполняйте задания и получайте монеты:</p>
-        
         <div class="task-item">
             <div class="task-info">📢 Подписка на Telegram-канал (+500 монет)</div>
             <button id="taskBtn1" class="task-btn" onclick="handleTask(1, 'https://t.me/rx_empire_channel')">Выполнить</button>
         </div>
-
         <div class="task-item">
             <div class="task-info">📺 Подписка / Просмотр YouTube (+1,000 монет)</div>
             <button id="taskBtn2" class="task-btn" onclick="handleTask(2, 'https://youtube.com')">Выполнить</button>
         </div>
-
         <div style="margin-top: 15px;">
             <button class="btn-primary" onclick="closeTaskModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px;">Закрыть</button>
         </div>
@@ -327,11 +313,9 @@
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center; color:#e53e3e;">🏆 Таблица лидеров</h3>
         <p style="font-size:12px; color:#666; text-align:center;">Самые успешные игроки RX Empire:</p>
-        
         <div id="leadersList" style="max-height: 250px; overflow-y: auto;">
             <div style="text-align:center; font-size:13px; color:#666; padding: 15px;">Загрузка...</div>
         </div>
-
         <div style="margin-top: 15px;">
             <button class="btn-primary" onclick="closeLeaderboardModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px;">Закрыть</button>
         </div>
@@ -340,10 +324,18 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // НАСТРОЙКИ SUPABASE (Замените на свои данные из проекта Supabase, когда создадите таблицу "players")
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-    const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-    const supabaseClient = (SUPABASE_URL !== 'YOUR_SUPABASE_URL') ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+    // НАСТРОЙКИ SUPABASE (вставьте свои данные аккуратно)
+    const SUPABASE_URL = 'https://iwkpkvnpmokbeddxyjrk.supabase.co';
+    const SUPABASE_KEY = 'ВАШ_ANON_KEY';
+    
+    let supabaseClient = null;
+    try {
+        if (window.supabase && SUPABASE_KEY !== 'ВАШ_ANON_KEY') {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+    } catch(e) {
+        console.error("Supabase init error:", e);
+    }
 
     const tg = window.Telegram.WebApp;
 
@@ -389,18 +381,16 @@
     function addCoins(amount) {
         score += amount;
         updateScoreDisplay();
-        syncUserData(); // Синхронизируем с облаком при изменении счета
+        syncUserData();
     }
 
-    // Синхронизация данных игрока с базой Supabase
     async function syncUserData() {
         if (!supabaseClient) return;
         try {
             await supabaseClient.from('players').upsert({
                 user_id: userId,
                 name: userName,
-                score: score,
-                updated_at: new Date()
+                score: score
             }, { onConflict: 'user_id' });
         } catch (e) {
             console.error('Sync error:', e);
@@ -474,13 +464,12 @@
         document.getElementById('taskModal').style.display = 'none';
     }
 
-    // Открытие таблицы лидеров
     async function openLeaderboardModal() {
         document.getElementById('leaderboardModal').style.display = 'flex';
         const listContainer = document.getElementById('leadersList');
-        
+
         if (!supabaseClient) {
-            listContainer.innerHTML = `<div style="text-align:center; font-size:12px; color:#e53e3e; padding: 15px;">⚠️ База данных не настроена.<br>Укажите параметры Supabase в коде.</div>`;
+            listContainer.innerHTML = `<div style="text-align:center; font-size:12px; color:#e53e3e; padding: 15px;">⚠️ База данных не подключена (проверьте ключ).</div>`;
             return;
         }
 
@@ -502,7 +491,7 @@
 
             let html = '';
             data.forEach((player, index) => {
-                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index+1}.`;
                 html += `
                     <div class="leader-row">
                         <span>${medal} <strong>${player.name}</strong></span>
@@ -526,7 +515,7 @@
     function checkTaskStates() {
         for (let id = 1; id <= 2; id++) {
             const btn = document.getElementById(`taskBtn${id}`);
-            if (taskSteps[id] === 1) {
+    if (taskSteps[id] === 1) {
                 btn.textContent = '✔️ Проверить';
                 btn.style.background = '#38a169';
                 btn.disabled = false;
@@ -553,8 +542,6 @@
             } else {
                 window.open(url, '_blank');
             }
-            
-            alert('📢 Перейдите по ссылке, выполните задание, затем вернитесь и нажмите "Проверить"!');
         } else if (taskSteps[taskId] === 1) {
             taskSteps[taskId] = 2;
             localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
