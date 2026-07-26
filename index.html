@@ -110,7 +110,6 @@
             justify-content: center;
             gap: 2px;
         }
-        /* Стиль значка в стиле Hamster (эмодзи сверху, мелкий текст снизу) */
         .btn-content {
             display: flex;
             flex-direction: column;
@@ -238,13 +237,13 @@
         </div>
     </div>
 
+    <!-- Главный экран: Тапалка (Летающий Том) -->
     <div id="gameCanvasContainer">
         <canvas id="flyCanvas" width="320" height="270"></canvas>
     </div>
 
     <div>
         <div class="button-group">
-            <!-- Кнопка Друзья в стиле Hamster -->
             <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">
                 <div class="btn-content">
                     <span class="btn-icon">👥</span>
@@ -271,7 +270,8 @@
             </button>
             <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169; grid-column: span 2; padding: 6px;">
                 <div class="btn-content">
-                    <span class="btn-icon" style="font-size: 14px;">💸 Вывести</span>
+                    <span class="btn-icon">💸</span>
+                    <span class="btn-label">Вывести</span>
                 </div>
             </button>
         </div>
@@ -282,23 +282,16 @@
     </div>
 </div>
 
-<!-- Модальное окно: Мини-игры -->
+<!-- Модальное окно: Мини-игры (С летящей монетой / Flappy Coin) -->
 <div id="gamesModal" class="modal">
     <div class="modal-content" style="text-align: center;">
-        <h3 style="margin-top:0; color:#805ad5;">🎮 Игровая зона</h3>
-        <p style="font-size:12px; color:#666;">Испытай удачу и выиграй бонусные монеты!</p>
+        <h3 style="margin-top:0; color:#805ad5;">🎮 Мини-игра: Летающая монета</h3>
+        <p style="font-size:12px; color:#666; margin-bottom: 8px;">Тапай, проводи монету сквозь препятствия и зарабатывай бонусы!</p>
         
-        <div style="background: #f7fafc; padding: 15px; border-radius: 14px; margin-bottom: 12px;">
-            <div style="font-weight: bold; font-size: 14px; color: #2d3748; margin-bottom: 8px;">🎲 Угадай число (1 - 3)</div>
-            <p style="font-size: 11px; color: #718096; margin-top: 0;">Стоимость игры: 100 монет. При выигрыше: +300 монет!</p>
-            <div style="display: flex; gap: 6px; justify-content: center; margin-top: 10px;">
-                <button class="btn-primary" onclick="playGuessGame(1)" style="background: #3182ce; padding: 10px 15px;">1</button>
-                <button class="btn-primary" onclick="playGuessGame(2)" style="background: #3182ce; padding: 10px 15px;">2</button>
-                <button class="btn-primary" onclick="playGuessGame(3)" style="background: #3182ce; padding: 10px 15px;">3</button>
-            </div>
+        <!-- Мини-холст для игры с монетой -->
+        <div style="position: relative; margin: 0 auto 12px auto; width: 280px; height: 200px; background: linear-gradient(to bottom, #667eea, #764ba2); border-radius: 12px; overflow: hidden; border: 2px solid #fff;">
+            <canvas id="coinCanvas" width="280" height="200" style="width: 100%; height: 100%; display: block; cursor: pointer;"></canvas>
         </div>
-
-        <div id="gameResultText" style="font-size: 13px; font-weight: bold; margin-bottom: 15px; color: #2b6cb0; min-height: 20px;"></div>
 
         <button class="btn-primary" onclick="closeGamesModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px; display:block;">Закрыть</button>
     </div>
@@ -452,7 +445,7 @@
         syncUserData();
     });
 
-    // --- ЛЕТАЮЩИЙ ТОМ (УМЕРЕННАЯ СЛОЖНОСТЬ) ---
+    // --- ГЛАВНАЯ ИГРА: ЛЕТАЮЩИЙ ТОМ ---
     const canvas = document.getElementById('flyCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -463,15 +456,15 @@
         x: 60,
         y: 130,
         size: 40,
-        gravity: 0.22,    // Чуть-чуть плотнее гравитация
-        lift: -4.5,       // Сбалансированный прыжок
+        gravity: 0.23,
+        lift: -4.6,
         velocity: 0
     };
 
     let pipes = [];
     let pipeWidth = 55;
-    let pipeGap = 120;    // Чуть сузили проход между труб (было 135) — стало чуть сложнее и интереснее
-    let pipeSpeed = 1.4;  // Чуть быстрее движутся трубы (было 1.2)
+    let pipeGap = 115;
+    let pipeSpeed = 1.5;
     let frameCount = 0;
     let gameOver = false;
 
@@ -504,7 +497,7 @@
                 gameOver = true;
             }
 
-            if (frameCount % 130 === 0) {
+            if (frameCount % 125 === 0) {
                 let minHeight = 40;
                 let maxHeight = canvas.height - pipeGap - 40;
                 let topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
@@ -590,40 +583,151 @@
         gameLoop();
     }
 
-    // Модальные окна
+
+    // --- МИНИ-ИГРА: ЛЕТАЮЩАЯ МОНЕТА (В ОКНЕ МИНИ-ИГР) ---
+    const coinCanvas = document.getElementById('coinCanvas');
+    const coinCtx = coinCanvas.getContext('2d');
+
+    let coinObj = {
+        x: 50,
+        y: 100,
+        size: 32,
+        gravity: 0.2,
+        lift: -4.0,
+        velocity: 0
+    };
+
+    let coinPipes = [];
+    let coinPipeWidth = 45;
+    let coinPipeGap = 100;
+    let coinPipeSpeed = 1.3;
+    let coinFrameCount = 0;
+    let coinGameOver = false;
+    let isGamesModalOpen = false;
+
+    function jumpCoin() {
+        coinObj.velocity = coinObj.lift;
+        if (coinGameOver) {
+            resetCoinGame();
+        }
+    }
+
+    coinCanvas.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        jumpCoin();
+    });
+
+    function resetCoinGame() {
+        coinObj.y = 100;
+        coinObj.velocity = 0;
+        coinPipes = [];
+        coinFrameCount = 0;
+        coinGameOver = false;
+    }
+
+    function updateCoinGame() {
+        if (!isGamesModalOpen) return;
+
+        if (!coinGameOver) {
+            coinObj.velocity += coinObj.gravity;
+            coinObj.y += coinObj.velocity;
+
+            if (coinObj.y + coinObj.size > coinCanvas.height || coinObj.y < 0) {
+                coinGameOver = true;
+            }
+
+            if (coinFrameCount % 140 === 0) {
+                let minH = 30;
+                let maxH = coinCanvas.height - coinPipeGap - 30;
+                let topH = Math.floor(Math.random() * (maxH - minH + 1)) + minH;
+                
+                coinPipes.push({
+                    x: coinCanvas.width,
+                    top: topH,
+                    bottom: coinCanvas.height - topH - coinPipeGap,
+                    passed: false
+                });
+            }
+
+            for (let i = coinPipes.length - 1; i >= 0; i--) {
+                coinPipes[i].x -= coinPipeSpeed;
+
+                if (
+                    coinObj.x + coinObj.size > coinPipes[i].x + 6 &&
+                    coinObj.x < coinPipes[i].x + coinPipeWidth - 6 &&
+                    (coinObj.y + 6 < coinPipes[i].top || coinObj.y + coinObj.size - 6 > coinCanvas.height - coinPipes[i].bottom)
+                ) {
+                    coinGameOver = true;
+                }
+
+                if (!coinPipes[i].passed && coinPipes[i].x + coinPipeWidth < coinObj.x) {
+                    coinPipes[i].passed = true;
+                    addCoins(2); // За монету в мини-игре даем 2 очка!
+                }
+
+                if (coinPipes[i].x + coinPipeWidth < 0) {
+                    coinPipes.splice(i, 1);
+                }
+            }
+
+            coinFrameCount++;
+        }
+    }
+
+    function drawCoinGame() {
+        coinCtx.clearRect(0, 0, coinCanvas.width, coinCanvas.height);
+
+        // Трубы
+        coinCtx.fillStyle = '#3182ce';
+        for (let i = 0; i < coinPipes.length; i++) {
+            coinCtx.fillRect(coinPipes[i].x, 0, coinPipeWidth, coinPipes[i].top);
+            coinCtx.fillRect(coinPipes[i].x, coinCanvas.height - coinPipes[i].bottom, coinPipeWidth, coinPipes[i].bottom);
+        }
+
+        // Летающая монета
+        coinCtx.save();
+        coinCtx.translate(coinObj.x + coinObj.size/2, coinObj.y + coinObj.size/2);
+        let rot = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, coinObj.velocity * 0.08));
+        coinCtx.rotate(rot);
+        
+        coinCtx.beginPath();
+        coinCtx.arc(0, 0, coinObj.size/2, 0, Math.PI * 2);
+        coinCtx.clip();
+        coinCtx.drawImage(catImg, -coinObj.size/2, -coinObj.size/2, coinObj.size, coinObj.size);
+        coinCtx.restore();
+
+        if (coinGameOver) {
+            coinCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            coinCtx.fillRect(0, 0, coinCanvas.width, coinCanvas.height);
+            
+            coinCtx.fillStyle = '#fff';
+            coinCtx.font = 'bold 14px Arial';
+            coinCtx.textAlign = 'center';
+            coinCtx.fillText('Кликни, чтобы играть', coinCanvas.width / 2, coinCanvas.height / 2 - 8);
+            
+            coinCtx.fillStyle = '#f6ad55';
+            coinCtx.font = '11px Arial';
+            coinCtx.fillText('Игра окончена', coinCanvas.width / 2, coinCanvas.height / 2 + 12);
+        }
+    }
+
+    function coinGameLoop() {
+        updateCoinGame();
+        drawCoinGame();
+        requestAnimationFrame(coinGameLoop);
+    }
+    coinGameLoop();
+
+
+    // Модальные окна управления
     function openGamesModal() {
+        isGamesModalOpen = true;
         document.getElementById('gamesModal').style.display = 'flex';
-        document.getElementById('gameResultText').textContent = '';
+        resetCoinGame();
     }
     function closeGamesModal() {
+        isGamesModalOpen = false;
         document.getElementById('gamesModal').style.display = 'none';
-    }
-
-    function playGuessGame(chosenNum) {
-        const cost = 100;
-        const reward = 300;
-        const resultText = document.getElementById('gameResultText');
-
-        if (score < cost) {
-            resultText.style.color = '#e53e3e';
-            resultText.textContent = '❌ Недостаточно монет (нужно 100)!';
-            return;
-        }
-
-        score -= cost;
-        updateScoreDisplay();
-
-        const winningNum = Math.floor(Math.random() * 3) + 1;
-
-        if (chosenNum === winningNum) {
-            score += reward;
-            updateScoreDisplay();
-            resultText.style.color = '#38a169';
-            resultText.textContent = `🎉 Победа! Вы угадали число ${winningNum} и выиграли +${reward} монет!`;
-        } else {
-            resultText.style.color = '#e53e3e';
-            resultText.textContent = `😢 Не угадали. Бот загадал число ${winningNum}. Попробуйте еще раз!`;
-        }
     }
 
     function openInviteModal() {
