@@ -23,6 +23,7 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
+            overflow: hidden;
         }
         .container {
             background: transparent;
@@ -41,17 +42,17 @@
         }
         h1 {
             margin: 5px 0;
-            font-size: 26px;
+            font-size: 24px;
             color: #fff;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .user-info {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 12px;
-            margin: 5px 0;
-            font-size: 13px;
+            margin: 2px 0;
+            font-size: 12px;
             text-align: left;
             color: #fff;
         }
@@ -64,18 +65,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin: 5px 0;
+            gap: 8px;
+            margin: 2px 0;
         }
         .score {
-            font-size: 42px;
+            font-size: 34px;
             font-weight: bold;
             color: #fff;
             text-shadow: 0 3px 6px rgba(0,0,0,0.3);
         }
         .score-icon {
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             object-fit: cover;
             box-shadow: 0 3px 6px rgba(0,0,0,0.3);
@@ -89,7 +90,7 @@
             margin: 5px 0;
         }
         .btn-primary {
-            padding: 12px 6px;
+            padding: 10px 6px;
             border: none;
             border-radius: 14px;
             font-weight: bold;
@@ -108,50 +109,24 @@
             color: #cbd5e0;
         }
 
-        #clickArea {
-            cursor: pointer;
-            display: inline-block;
+        /* Игровая область Летающего Тома */
+        #gameCanvasContainer {
+            position: relative;
             margin: auto;
-            width: 210px;
-            height: 210px;
-            border-radius: 50%;
-            touch-action: none;
-            transition: transform 0.05s ease;
-        }
-        #clickArea:active {
-            transform: scale(0.92);
-        }
-
-        #clickArea img {
-            width: 210px;
-            height: 210px;
-            border-radius: 50%;
-            object-fit: cover;
-            user-select: none;
-            pointer-events: none;
+            width: 280px;
+            height: 240px;
+            background: linear-gradient(to bottom, #4fd1c5, #63b3ed);
+            border-radius: 20px;
+            overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            cursor: pointer;
         }
 
-        .floating-number {
-            position: absolute;
-            font-size: 28px;
-            font-weight: bold;
-            color: #f6ad55;
-            pointer-events: none;
-            animation: floatUp 0.7s ease-out forwards;
-            z-index: 100;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-70px) scale(1.4);
-            }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
         .modal {
@@ -222,7 +197,7 @@
 
 <div class="container" id="gameContainer">
     <div>
-        <h1>🎮 RX_Empire</h1>
+        <h1>🐱 Летающий Том</h1>
         
         <div id="userInfo" class="user-info" style="display: none;">
             <div>👤 <strong>User:</strong> <span id="userName">Unknown</span></div>
@@ -239,16 +214,12 @@
         </div>
     </div>
 
-    <div id="clickArea">
-        <img src="RX-Empire.png" alt="RX Empire">
+    <!-- Холст игры Летающий Том -->
+    <div id="gameCanvasContainer">
+        <canvas id="flyCanvas" width="280" height="240"></canvas>
     </div>
 
     <div>
-        <div class="user-info" style="background: rgba(255, 255, 255, 0.2); border-left: 4px solid #f6ad55; text-align: left; color: #fff;">
-            💰 <strong>Конвертация:</strong> 10 000 монет = 1 Сомони<br>
-            <span style="font-size: 11px; color: #e2e8f0;">Обменивай игровые монеты на реальные деньги!</span>
-        </div>
-
         <div class="button-group">
             <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">👥 Друзья</button>
             <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e;">⭐ Задания</button>
@@ -258,7 +229,7 @@
         </div>
 
         <div class="info">
-            Click the circle to earn coins!
+            Тапай по экрану, чтобы лететь и собирать монеты!
         </div>
     </div>
 </div>
@@ -388,8 +359,6 @@
 
     const scoreEl = document.getElementById('score');
     const invitedCountEl = document.getElementById('invitedCount');
-    const clickArea = document.getElementById('clickArea');
-    const container = document.getElementById('gameContainer');
 
     function updateScoreDisplay() {
         scoreEl.textContent = score;
@@ -435,30 +404,154 @@
         syncUserData();
     });
 
-    clickArea.addEventListener('dblclick', (e) => {
+    // --- ЛЕТАЮЩИЙ ТОМ (Мини-игра аркада) ---
+    const canvas = document.getElementById('flyCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let catImg = new Image();
+    catImg.src = 'RX-Empire.png';
+
+    let cat = {
+        x: 50,
+        y: 120,
+        size: 30,
+        gravity: 0.35,
+        lift: -6,
+        velocity: 0
+    };
+
+    let pipes = [];
+    let pipeWidth = 45;
+    let pipeGap = 90;
+    let frameCount = 0;
+    let gameOver = false;
+
+    function jumpCat() {
+        cat.velocity = cat.lift;
+        if (gameOver) {
+            resetGame();
+        }
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
         e.preventDefault();
+        jumpCat();
     });
 
-    clickArea.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        addCoins(1);
+    function resetGame() {
+        cat.y = 120;
+        cat.velocity = 0;
+        pipes = [];
+        frameCount = 0;
+        gameOver = false;
+    }
 
-        const containerRect = container.getBoundingClientRect();
-        const x = e.clientX - containerRect.left;
-        const y = e.clientY - containerRect.top;
+    function updateGame() {
+        if (!gameOver) {
+            cat.velocity += cat.gravity;
+            cat.y += cat.velocity;
 
-        const floatNum = document.createElement('div');
-        floatNum.className = 'floating-number';
-        floatNum.textContent = '+1';
-        floatNum.style.left = `${x - 10}px`;
-        floatNum.style.top = `${y - 20}px`;
+            // Столкновение с полом или потолком
+            if (cat.y + cat.size > canvas.height || cat.y < 0) {
+                gameOver = true;
+            }
 
-        container.appendChild(floatNum);
+            // Спавн труб
+            if (frameCount % 90 === 0) {
+                let minHeight = 40;
+                let maxHeight = canvas.height - pipeGap - 40;
+                let topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
+                
+                pipes.push({
+                    x: canvas.width,
+                    top: topHeight,
+                    bottom: canvas.height - topHeight - pipeGap,
+                    passed: false
+                });
+            }
 
-        setTimeout(() => {
-            floatNum.remove();
-        }, 700);
-    });
+            // Движение труб и проверка столкновений
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                pipes[i].x -= 2;
+
+                // Проверка столкновения с трубами
+                if (
+                    cat.x + cat.size > pipes[i].x &&
+                    cat.x < pipes[i].x + pipeWidth &&
+                    (cat.y < pipes[i].top || cat.y + cat.size > canvas.height - pipes[i].bottom)
+                ) {
+                    gameOver = true;
+                }
+
+                // Начисление монет за пролет трубы
+                if (!pipes[i].passed && pipes[i].x + pipeWidth < cat.x) {
+                    pipes[i].passed = true;
+                    addCoins(1); // +1 монета за каждую пройденную трубу!
+                }
+
+                // Удаление ушедших труб
+                if (pipes[i].x + pipeWidth < 0) {
+                    pipes.splice(i, 1);
+                }
+            }
+
+            frameCount++;
+        }
+    }
+
+    function drawGame() {
+        // Очистка экрана
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Рисуем трубы
+        ctx.fillStyle = '#48bb78';
+        for (let i = 0; i < pipes.length; i++) {
+            ctx.fillRect(pipes[i].x, 0, pipeWidth, pipes[i].top);
+            ctx.fillRect(pipes[i].x, canvas.height - pipes[i].bottom, pipeWidth, pipes[i].bottom);
+        }
+
+        // Рисуем кота (Тома)
+        ctx.save();
+        ctx.translate(cat.x + cat.size/2, cat.y + cat.size/2);
+        let rot = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, cat.velocity * 0.1));
+        ctx.rotate(rot);
+        
+        ctx.beginPath();
+        ctx.arc(0, 0, cat.size/2, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(catImg, -cat.size/2, -cat.size/2, cat.size, cat.size);
+        ctx.restore();
+
+        // Надпись при проигрыше
+        if (gameOver) {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Кликни, чтобы начать', canvas.width / 2, canvas.height / 2 - 10);
+            
+            ctx.fillStyle = '#f6ad55';
+            ctx.font = '12px Arial';
+            ctx.fillText('Игра окончена', canvas.width / 2, canvas.height / 2 + 15);
+        }
+    }
+
+    function gameLoop() {
+        updateGame();
+        drawGame();
+        requestAnimationFrame(gameLoop);
+    }
+
+    catImg.onload = () => {
+        gameLoop();
+    };
+    // Если картинка уже в кеше браузера
+    if (catImg.complete) {
+        gameLoop();
+    }
+    // ------------------------------------------
 
     // Мини-игра функции
     function openGamesModal() {
