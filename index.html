@@ -160,7 +160,17 @@
     });
 
     updateScoreDisplay();
-</script>
+function inviteFriend() {
+    const userId = user ? user.id : '';
+    const botUsername = 'RX_Empire_bot'; // Замените на имя вашего бота из BotFather без @
+    const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=Играй со мной в RX Empire и зарабатывай монеты! 🚀`;
+    
+    if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(inviteUrl);
+    } else {
+        window.open(inviteUrl, '_blank');
+    }
+}</script>
 
 </body>
 </html>
