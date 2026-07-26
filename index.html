@@ -109,7 +109,6 @@
             color: #cbd5e0;
         }
 
-        /* Увеличенная игровая область Летающего Тома */
         #gameCanvasContainer {
             position: relative;
             margin: auto;
@@ -214,7 +213,6 @@
         </div>
     </div>
 
-    <!-- Холст игры Летающий Том (увеличен) -->
     <div id="gameCanvasContainer">
         <canvas id="flyCanvas" width="320" height="290"></canvas>
     </div>
@@ -404,7 +402,7 @@
         syncUserData();
     });
 
-    // --- ЛЕТАЮЩИЙ ТОМ (Плавная и комфортная аркада) ---
+    // --- ЛЕТАЮЩИЙ ТОМ ---
     const canvas = document.getElementById('flyCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -414,16 +412,16 @@
     let cat = {
         x: 60,
         y: 140,
-        size: 42,         // Увеличенный размер котика
-        gravity: 0.22,    // Плавная гравитация (медленнее падает)
-        lift: -4.8,       // Комфортный мягкий прыжок
+        size: 42,
+        gravity: 0.22,
+        lift: -4.8,
         velocity: 0
     };
 
     let pipes = [];
-    let pipeWidth = 55;   // Чуть шире трубы
-    let pipeGap = 110;    // Больше проход между трубами
-    let pipeSpeed = 1.4;  // Замедленная скорость движения препятствий
+    let pipeWidth = 55;
+    let pipeGap = 110;
+    let pipeSpeed = 1.4;
     let frameCount = 0;
     let gameOver = false;
 
@@ -452,12 +450,10 @@
             cat.velocity += cat.gravity;
             cat.y += cat.velocity;
 
-            // Столкновение с полом или потолком
             if (cat.y + cat.size > canvas.height || cat.y < 0) {
                 gameOver = true;
             }
 
-            // Спавн труб (реже, так как скорость ниже)
             if (frameCount % 130 === 0) {
                 let minHeight = 50;
                 let maxHeight = canvas.height - pipeGap - 50;
@@ -471,11 +467,9 @@
                 });
             }
 
-            // Движение труб и проверка столкновений
             for (let i = pipes.length - 1; i >= 0; i--) {
                 pipes[i].x -= pipeSpeed;
 
-                // Проверка столкновения с трубами
                 if (
                     cat.x + cat.size > pipes[i].x + 6 &&
                     cat.x < pipes[i].x + pipeWidth - 6 &&
@@ -484,13 +478,11 @@
                     gameOver = true;
                 }
 
-                // Начисление монет за пролет трубы
                 if (!pipes[i].passed && pipes[i].x + pipeWidth < cat.x) {
                     pipes[i].passed = true;
-                    addCoins(1); // +1 монета за каждую пройденную трубу!
+                    addCoins(1);
                 }
 
-                // Удаление ушедших труб
                 if (pipes[i].x + pipeWidth < 0) {
                     pipes.splice(i, 1);
                 }
@@ -501,17 +493,14 @@
     }
 
     function drawGame() {
-        // Очистка экрана
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Рисуем трубы
         ctx.fillStyle = '#48bb78';
         for (let i = 0; i < pipes.length; i++) {
             ctx.fillRect(pipes[i].x, 0, pipeWidth, pipes[i].top);
             ctx.fillRect(pipes[i].x, canvas.height - pipes[i].bottom, pipeWidth, pipes[i].bottom);
         }
 
-        // Рисуем кота (Тома)
         ctx.save();
         ctx.translate(cat.x + cat.size/2, cat.y + cat.size/2);
         let rot = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, cat.velocity * 0.08));
@@ -523,7 +512,6 @@
         ctx.drawImage(catImg, -cat.size/2, -cat.size/2, cat.size, cat.size);
         ctx.restore();
 
-        // Надпись при проигрыше
         if (gameOver) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -551,9 +539,8 @@
     if (catImg.complete) {
         gameLoop();
     }
-    // ------------------------------------------
 
-    // Мини-игра функции
+    // Модальные окна
     function openGamesModal() {
         document.getElementById('gamesModal').style.display = 'flex';
         document.getElementById('gameResultText').textContent = '';
@@ -694,8 +681,37 @@
             } else {
                 window.open(url, '_blank');
             }
-        } else.taskSteps[taskId] === 1 { // исправлено
-            // ... (остальной код заданий сохранен)
+        } else if (taskSteps[taskId] === 1) {
+            taskSteps[taskId] = 2;
+            localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
+
+            const reward = taskId === 1 ? 500 : 1000;
+            addCoins(reward);
+
+            btn.textContent = '✅ Выполнено';
+            btn.style.background = '#718096';
+            btn.disabled = true;
+
+            alert(`🎉 Поздравляем! Задание выполнено, вам начислено +${reward} монет!`);
+        }
+    }
+
+    function openWithdrawModal() {
+        const minCoins = 10000;
+        if (score < minCoins) {
+            alert(`❌ Недостаточно монет для вывода!\nМинимальная сумма: ${minCoins} монет.`);
+        } else {
+            const adminUsername = 'RX_Empire_bot'; 
+            const withdrawUrl = `https://t.me/${adminUsername}?text=Здравствуйте! Я хочу обменять свои ${score} монеты RX Empire на сомони. Мой ID: ${userId}`;
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(withdrawUrl);
+            } else {
+                window.open(withdrawUrl, '_blank');
+            }
         }
     }
 </script>
+
+</body>
+</html>
