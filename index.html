@@ -18,6 +18,7 @@
             color: #333;
             touch-action: manipulation;
             box-sizing: border-box;
+            user-select: none;
         }
         .container {
             background: #fff;
@@ -28,6 +29,8 @@
             width: 100%;
             max-width: 420px;
             box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
         }
         h1 {
             margin: 0 0 10px 0;
@@ -52,6 +55,7 @@
             font-weight: bold;
             color: #4a5568;
             margin: 10px 0;
+            transition: transform 0.1s ease;
         }
         .button-group {
             display: flex;
@@ -79,6 +83,44 @@
             margin-top: 10px;
             font-size: 11px;
             color: #718096;
+        }
+
+        /* Анимация клика по картинке (дергание/увеличение) */
+        #clickArea {
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px auto;
+            width: 190px;
+            height: 190px;
+            touch-action: manipulation;
+            transition: transform 0.08s ease;
+        }
+        #clickArea:active {
+            transform: scale(0.92); /* Уменьшается при нажатии */
+        }
+
+        /* Эффект вылетающей монетки (+1) */
+        .floating-number {
+            position: absolute;
+            font-size: 22px;
+            font-weight: bold;
+            color: #d69e2e;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 50;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-70px) scale(1.3);
+            }
         }
 
         /* Модальные окна */
@@ -140,7 +182,7 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="gameContainer">
     <h1>🎮 RX_Empire</h1>
     
     <div id="userInfo" class="user-info" style="display: none;">
@@ -157,7 +199,7 @@
     </div>
 
     <!-- Зона клика с картинкой -->
-    <div id="clickArea" style="cursor: pointer; display: flex; justify-content: center; align-items: center; margin: 15px auto; width: 190px; height: 190px; touch-action: manipulation;">
+    <div id="clickArea">
         <img src="RX-Empire.png" alt="RX Empire" style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; user-select: none; pointer-events: none;">
     </div>
 
@@ -221,13 +263,11 @@
         <h3 style="margin-top:0; text-align:center; color:#d69e2e;">⭐ Доступные задания</h3>
         <p style="font-size:12px; color:#666; text-align:center;">Выполняйте задания и получайте монеты:</p>
         
-        <!-- Задание 1: Подписка на Телеграм канал -->
         <div class="task-item">
             <div class="task-info">📢 Подписка на Telegram-канал (+500 монет)</div>
             <button id="taskBtn1" class="task-btn" onclick="handleTask(1, 'https://t.me/rx_empire_channel')">Выполнить</button>
         </div>
 
-        <!-- Задание 2: Переход на YouTube -->
         <div class="task-item">
             <div class="task-info">📺 Подписка / Просмотр YouTube (+1,000 монет)</div>
             <button id="taskBtn2" class="task-btn" onclick="handleTask(2, 'https://youtube.com')">Выполнить</button>
@@ -263,6 +303,7 @@
     let score = parseInt(localStorage.getItem('hamsterScore')) || 0;
     const scoreEl = document.getElementById('score');
     const clickArea = document.getElementById('clickArea');
+    const gameContainer = document.getElementById('gameContainer');
 
     function updateScoreDisplay() {
         scoreEl.textContent = score;
@@ -279,8 +320,27 @@
         updateScoreDisplay();
     }
 
-    clickArea.addEventListener('click', () => {
+    // Обработка клика по круглой картинке с анимацией вылета (+1)
+    clickArea.addEventListener('click', (e) => {
         addCoins(1);
+
+        // Создаем летящий элемент "+1" в месте клика
+        const rect = clickArea.getBoundingClientRect();
+        const x = e.clientX ? e.clientX - rect.left : rect.width / 2;
+        const y = e.clientY ? e.clientY - rect.top : rect.height / 2;
+
+        const floatNum = document.createElement('div');
+        floatNum.className = 'floating-number';
+        floatNum.textContent = '+1';
+        floatNum.style.left = `${x}px`;
+        floatNum.style.top = `${y}px`;
+
+        clickArea.appendChild(floatNum);
+
+        // Удаляем элемент после завершения анимации
+        setTimeout(() => {
+            floatNum.remove();
+        }, 800);
     });
 
     updateScoreDisplay();
@@ -295,7 +355,7 @@
 
     function shareInviteLink() {
         const userId = user ? user.id : '';
-        const botUsername = 'YOUR_BOT_USERNAME'; // Замените на юзернейм вашего бота
+        const botUsername = 'YOUR_BOT_USERNAME'; 
         const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=Играй со мной в RX Empire и зарабатывай монеты! 🚀`;
         
         if (window.Telegram && window.Telegram.WebApp) {
@@ -314,8 +374,7 @@
         document.getElementById('taskModal').style.display = 'none';
     }
 
-    // Логика заданий с проверкой (шаг 1 -> переход, шаг 2 -> проверка и награда)
-    let taskSteps = JSON.parse(localStorage.getItem('taskSteps')) || { 1: 0, 2: 0 }; // 0 - не начато, 1 - перешел, 2 - выполнено
+    let taskSteps = JSON.parse(localStorage.getItem('taskSteps')) || { 1: 0, 2: 0 };
 
     function checkTaskStates() {
         for (let id = 1; id <= 2; id++) {
@@ -323,6 +382,7 @@
             if (taskSteps[id] === 1) {
                 btn.textContent = '✔️ Проверить';
                 btn.style.background = '#38a169';
+                btn.disabled = false;
             } else if (taskSteps[id] === 2) {
                 btn.textContent = '✅ Выполнено';
                 btn.style.background = '#718096';
@@ -335,7 +395,6 @@
         const btn = document.getElementById(`taskBtn${taskId}`);
 
         if (taskSteps[taskId] === 0) {
-            // Шаг 1: Открываем ссылку
             taskSteps[taskId] = 1;
             localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
             
@@ -348,9 +407,8 @@
                 window.open(url, '_blank');
             }
             
-            alert('📢 Перейдите по ссылке, подпишитесь/посмотрите, затем вернитесь и нажмите "Проверить" еще раз!');
+            alert('📢 Перейдите по ссылке, выполните задание, затем вернитесь и нажмите "Проверить"!');
         } else if (taskSteps[taskId] === 1) {
-            // Шаг 2: Проверяем и выдаем монеты
             taskSteps[taskId] = 2;
             localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
 
@@ -365,13 +423,13 @@
         }
     }
 
-    // Функция вывода в сомони
+    // Вывод в сомони
     function openWithdrawModal() {
         const minCoins = 10000;
         if (score < minCoins) {
             alert(`❌ Недостаточно монет для вывода!\nМинимальная сумма: ${minCoins} монет.`);
         } else {
-            const adminUsername = 'RX_Empire_bot'; // Ваш юзернейм для связи
+            const adminUsername = 'RX_Empire_bot'; 
             const userId = user ? user.id : 'unknown';
             const withdrawUrl = `https://t.me/${adminUsername}?text=Здравствуйте! Я хочу обменять свои ${score} монеты RX Empire на сомони. Мой ID: ${userId}`;
             
