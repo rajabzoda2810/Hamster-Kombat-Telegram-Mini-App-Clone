@@ -255,16 +255,52 @@
     }
 
     // Функция заданий (подписка на канал)
+        // Состояние задания (сохраняется, чтобы бонус не получали бесконечно)
+    let taskCompleted = localStorage.getItem('taskCompleted') === 'true';
+    let taskStarted = false;
+
     function openTask() {
+        const btn = event ? event.target : null;
+
+        if (taskCompleted) {
+            alert('✅ Вы уже выполнили это задание и получили бонус!');
+            return;
+        }
+
         const channelUrl = 'https://t.me/rx_empire_channel';
-        addCoins(500);
-        
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.openTelegramLink(channelUrl);
+
+        if (!taskStarted) {
+            // Шаг 1: Открываем канал и меняем кнопку для проверки
+            taskStarted = true;
+            if (btn) {
+                btn.textContent = '✔️ Проверить подписку';
+                btn.style.background = '#38a169'; // Зеленый цвет
+            }
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(channelUrl);
+            } else {
+                window.open(channelUrl, '_blank');
+            }
+            
+            alert('📢 Подпишитесь на канал, а затем вернитесь сюда и нажмите кнопку еще раз для проверки!');
         } else {
-            window.open(channelUrl, '_blank');
+            // Шаг 2: Проверка и начисление монет
+            taskCompleted = true;
+            localStorage.setItem('taskCompleted', 'true');
+            
+            addCoins(500);
+            
+            if (btn) {
+                btn.textContent = '✅ Выполнено';
+                btn.style.background = '#718096';
+                btn.disabled = true;
+            }
+
+            alert('🎉 Поздравляем! Подписка подтверждена, вам начислено +500 монет!');
         }
     }
+
 
     // Функция вывода в сомони
     function openWithdrawModal() {
