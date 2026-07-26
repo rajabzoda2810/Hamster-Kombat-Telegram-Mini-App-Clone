@@ -91,7 +91,7 @@
             flex-shrink: 0;
         }
         .btn-primary {
-            padding: 10px 6px;
+            padding: 8px 6px;
             border: none;
             border-radius: 12px;
             font-weight: bold;
@@ -104,7 +104,28 @@
             white-space: nowrap;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
         }
+        /* Стиль значка в стиле Hamster (эмодзи сверху, мелкий текст снизу) */
+        .btn-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.1;
+        }
+        .btn-icon {
+            font-size: 16px;
+        }
+        .btn-label {
+            font-size: 10px;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+
         .info {
             margin-bottom: 2px;
             font-size: 10px;
@@ -223,11 +244,36 @@
 
     <div>
         <div class="button-group">
-            <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">👥 Друзья</button>
-            <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e;">⭐ Задания</button>
-            <button class="btn-primary" onclick="openGamesModal()" style="background: #805ad5;">🎮 Мини-игры</button>
-            <button class="btn-primary" onclick="openLeaderboardModal()" style="background: #e53e3e;">🏆 Топ</button>
-            <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169; grid-column: span 2;">💸 Вывести</button>
+            <!-- Кнопка Друзья в стиле Hamster -->
+            <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">
+                <div class="btn-content">
+                    <span class="btn-icon">👥</span>
+                    <span class="btn-label">Друзья</span>
+                </div>
+            </button>
+            <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e;">
+                <div class="btn-content">
+                    <span class="btn-icon">⭐</span>
+                    <span class="btn-label">Задания</span>
+                </div>
+            </button>
+            <button class="btn-primary" onclick="openGamesModal()" style="background: #805ad5;">
+                <div class="btn-content">
+                    <span class="btn-icon">🎮</span>
+                    <span class="btn-label">Мини-игры</span>
+                </div>
+            </button>
+            <button class="btn-primary" onclick="openLeaderboardModal()" style="background: #e53e3e;">
+                <div class="btn-content">
+                    <span class="btn-icon">🏆</span>
+                    <span class="btn-label">Топ</span>
+                </div>
+            </button>
+            <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169; grid-column: span 2; padding: 6px;">
+                <div class="btn-content">
+                    <span class="btn-icon" style="font-size: 14px;">💸 Вывести</span>
+                </div>
+            </button>
         </div>
 
         <div class="info">
@@ -254,7 +300,7 @@
 
         <div id="gameResultText" style="font-size: 13px; font-weight: bold; margin-bottom: 15px; color: #2b6cb0; min-height: 20px;"></div>
 
-        <button class="btn-primary" onclick="closeGamesModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px;">Закрыть</button>
+        <button class="btn-primary" onclick="closeGamesModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px; display:block;">Закрыть</button>
     </div>
 </div>
 
@@ -299,7 +345,7 @@
             <button id="taskBtn2" class="task-btn" onclick="handleTask(2, 'https://youtube.com')">Выполнить</button>
         </div>
         <div style="margin-top: 15px;">
-            <button class="btn-primary" onclick="closeTaskModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px;">Закрыть</button>
+            <button class="btn-primary" onclick="closeTaskModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px; display:block;">Закрыть</button>
         </div>
     </div>
 </div>
@@ -313,7 +359,7 @@
             <div style="text-align:center; font-size:13px; color:#666; padding: 15px;">Загрузка...</div>
         </div>
         <div style="margin-top: 15px;">
-            <button class="btn-primary" onclick="closeLeaderboardModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px;">Закрыть</button>
+            <button class="btn-primary" onclick="closeLeaderboardModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px; display:block;">Закрыть</button>
         </div>
     </div>
 </div>
@@ -406,7 +452,7 @@
         syncUserData();
     });
 
-    // --- ЛЕТАЮЩИЙ ТОМ (СУПЕР ЛЕГКИЙ РЕЖИМ) ---
+    // --- ЛЕТАЮЩИЙ ТОМ (УМЕРЕННАЯ СЛОЖНОСТЬ) ---
     const canvas = document.getElementById('flyCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -417,15 +463,15 @@
         x: 60,
         y: 130,
         size: 40,
-        gravity: 0.18,    // Очень легкая гравитация
-        lift: -4.2,       // Мягкий и плавный прыжок
+        gravity: 0.22,    // Чуть-чуть плотнее гравитация
+        lift: -4.5,       // Сбалансированный прыжок
         velocity: 0
     };
 
     let pipes = [];
     let pipeWidth = 55;
-    let pipeGap = 135;    // ОГРОМНЫЙ проход между трубами — пролететь проще простого!
-    let pipeSpeed = 1.2;  // Медленная скорость движения
+    let pipeGap = 120;    // Чуть сузили проход между труб (было 135) — стало чуть сложнее и интереснее
+    let pipeSpeed = 1.4;  // Чуть быстрее движутся трубы (было 1.2)
     let frameCount = 0;
     let gameOver = false;
 
@@ -458,7 +504,7 @@
                 gameOver = true;
             }
 
-            if (frameCount % 140 === 0) {
+            if (frameCount % 130 === 0) {
                 let minHeight = 40;
                 let maxHeight = canvas.height - pipeGap - 40;
                 let topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
