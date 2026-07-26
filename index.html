@@ -14,6 +14,7 @@
             flex-direction: column;
             align-items: center;
             color: #333;
+            touch-action: manipulation;
         }
         .container {
             background: #fff;
@@ -52,7 +53,7 @@
             display: flex;
             gap: 10px;
             justify-content: center;
-            margin: 15px 0;
+            margin: 10px 0;
         }
         .btn-primary, .btn-secondary {
             padding: 10px 15px;
@@ -94,23 +95,34 @@
         <span id="score">0</span> 🪙
     </div>
 
-    <!-- Единая чистая зона клика с вашей картинкой -->
-<div id="clickArea" style="cursor: pointer; display: flex; justify-content: center; align-items: center; margin: 20px auto; width: 160px; height: 160px; touch-action: manipulation;">
-    <img src="RX-Empire.png" alt="RX Empire" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; user-select: none; pointer-events: none;">
-</div>
+    <!-- Зона клика с картинкой -->
+    <div id="clickArea" style="cursor: pointer; display: flex; justify-content: center; align-items: center; margin: 20px auto; width: 160px; height: 160px; touch-action: manipulation;">
+        <img src="RX-Empire.png" alt="RX Empire" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; user-select: none; pointer-events: none;">
+    </div>
 
+    <!-- Кнопки управления монетами -->
     <div class="button-group">
         <button class="btn-primary" onclick="addCoins(100)">+100</button>
         <button class="btn-primary" onclick="addCoins(1000)">+1000</button>
         <button class="btn-secondary" onclick="resetScore()">Reset</button>
     </div>
+
+    <!-- Кнопки Друзья и Задания -->
+    <div class="button-group" style="margin-top: 10px; display: flex; gap: 10px;">
+        <button class="btn-primary" onclick="inviteFriend()" style="background: #3182ce; flex: 1;">👥 Друзья</button>
+        <button class="btn-primary" onclick="openTask()" style="background: #d69e2e; flex: 1;">⭐ Задания</button>
+    </div>
+
+    <!-- Инфо о конвертации и вывод -->
+    <div class="user-info" style="background: #fffaf0; border-left: 4px solid #dd6b20; margin: 15px 0; text-align: left;">
+        💰 <strong>Конвертация:</strong> 10 000 монет = 1 Сомони<br>
+        <span style="font-size: 11px; color: #718096;">Обменивай игровые монеты на реальные деньги!</span>
+    </div>
+
     <div class="button-group" style="margin-top: 10px;">
-    <button class="btn-primary" onclick="inviteFriend()" style="background: #3182ce; width: 100%;">👥 Пригласить друга</button>
-</div>
-<div class="button-group" style="margin-top: 10px; display: flex; gap: 10px;">
-    <button class="btn-primary" onclick="inviteFriend()" style="background: #3182ce; flex: 1;">👥 Друзья</button>
-    <button class="btn-primary" onclick="openTask()" style="background: #d69e2e; flex: 1;">⭐ Задания</button>
-</div>
+        <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169; width: 100%;">💸 Вывести в Сомони</button>
+    </div>
+
     <div class="info">
         Click the circle or use buttons to earn coins!
     </div>
@@ -118,7 +130,6 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // Initialize Telegram Web App
     const tg = window.Telegram.WebApp;
 
     if (tg) {
@@ -138,7 +149,6 @@
         statusEl.textContent = '⚠️ Not running in Telegram';
     }
 
-    // Score management
     let score = parseInt(localStorage.getItem('hamsterScore')) || 0;
     const scoreEl = document.getElementById('score');
     const clickArea = document.getElementById('clickArea');
@@ -163,17 +173,49 @@
     });
 
     updateScoreDisplay();
-function inviteFriend() {
-    const userId = user ? user.id : '';
-    const botUsername = 'RX_Empire_bot'; // Замените на имя вашего бота из BotFather без @
-    const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=Играй со мной в RX Empire и зарабатывай монеты! 🚀`;
-    
-    if (tg && tg.openTelegramLink) {
-        tg.openTelegramLink(inviteUrl);
-    } else {
-        window.open(inviteUrl, '_blank');
+
+    // Функция приглашения друзей
+    function inviteFriend() {
+        const userId = user ? user.id : '';
+        const botUsername = 'YOUR_BOT_USERNAME'; // Замените на юзернейм вашего бота из BotFather без @
+        const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=Играй со мной в RX Empire и зарабатывай монеты! 🚀`;
+        
+        if (tg && tg.openTelegramLink) {
+            tg.openTelegramLink(inviteUrl);
+        } else {
+            window.open(inviteUrl, '_blank');
+        }
     }
-}</script>
+
+    // Функция заданий (подписка на канал)
+    function openTask() {
+        const channelUrl = 'https://t.me/your_channel'; // Ссылка на ваш канал
+        
+        if (tg && tg.openTelegramLink) {
+            tg.openTelegramLink(channelUrl);
+        } else {
+            window.open(channelUrl, '_blank');
+        }
+    }
+
+    // Функция вывода в сомони
+    function openWithdrawModal() {
+        const minCoins = 10000;
+        if (score < minCoins) {
+            alert(`❌ Недостаточно монет для вывода!\nМинимальная сумма: ${minCoins} монет.`);
+        } else {
+            const adminUsername = 'YOUR_BOT_USERNAME'; // Ваш юзернейм для связи
+            const userId = user ? user.id : 'unknown';
+            const withdrawUrl = `https://t.me/${adminUsername}?text=Здравствуйте! Я хочу обменять свои ${score} монеты RX Empire на сомони. Мой ID: ${userId}`;
+            
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(withdrawUrl);
+            } else {
+                window.open(withdrawUrl, '_blank');
+            }
+        }
+    }
+</script>
 
 </body>
 </html>
