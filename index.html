@@ -175,13 +175,20 @@
             max-height: 80vh;
             overflow-y: auto;
         }
+        /* Увеличенные эмодзи и иконки в разделе друзей */
         .reward-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
             border-bottom: 1px solid #eee;
-            font-size: 16px;
+            font-size: 17px;
+        }
+        .reward-item span {
+            font-size: 20px; /* Увеличили размер левой части с эмодзи */
+        }
+        .reward-item b {
+            font-size: 16px; /* Увеличили размер правой части с монетами */
         }
         .task-item {
             background: #f7fafc;
@@ -283,7 +290,7 @@
     </div>
 </div>
 
-<!-- Модальное окно: Мини-игры (Пустое, готовое) -->
+<!-- Модальное окно: Мини-игры -->
 <div id="gamesModal" class="modal">
     <div class="modal-content" style="text-align: center;">
         <h3 style="margin-top:0; color:#805ad5; font-size: 20px;">🎮 Мини-игры</h3>
@@ -293,14 +300,14 @@
     </div>
 </div>
 
-<!-- Модальное окно: Друзья -->
+<!-- Модальное окно: Друзья (С увеличенными эмодзи) -->
 <div id="inviteModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0; text-align:center; color:#2b6cb0; font-size: 20px;">🎁 Награды за друзей</h3>
+        <h3 style="margin-top:0; text-align:center; color:#2b6cb0; font-size: 22px;">🎁 Награды за друзей</h3>
         <div style="background: #eef2f7; padding: 12px; border-radius: 12px; margin-bottom: 12px; text-align: center; font-size: 16px;">
-            <span style="font-size: 22px;">👥</span> Приглашено друзей: <strong id="invitedCount" style="color: #2b6cb0;">0</strong>
+            <span style="font-size: 26px;">👥</span> Приглашено друзей: <strong id="invitedCount" style="color: #2b6cb0; font-size: 18px;">0</strong>
         </div>
-        <p style="font-size:13px; color:#666; text-align:center; margin-top:0;">Приглашайте друзей и забирайте бонусы:</p>
+        <p style="font-size:14px; color:#666; text-align:center; margin-top:0;">Приглашайте друзей и забирайте бонусы:</p>
         <div id="rewardsList">
             <div class="reward-item"><span>👥 1 друг:</span> <b>+500 🪙</b></div>
             <div class="reward-item"><span>👥 2 друга:</span> <b>+1,200 🪙</b></div>
@@ -441,7 +448,7 @@
         syncUserData();
     });
 
-    // --- ГЛАВНАЯ ИГРА: ЛЕТАЮЩИЙ ТОМ ---
+    // --- ГЛАВНАЯ ИГРА: ЛЕТАЮЩИЙ ТОМ (МОНЕТА ПАДАЕТ СВЕРХУ) ---
     const canvas = document.getElementById('flyCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -450,7 +457,7 @@
 
     let cat = {
         x: 60,
-        y: 130,
+        y: 40,           // Начальная позиция сверху холста
         size: 40,
         gravity: 0.23,
         lift: -4.6,
@@ -477,7 +484,7 @@
     });
 
     function resetGame() {
-        cat.y = 130;
+        cat.y = 40;      // Сброс наверх при перезапуске
         cat.velocity = 0;
         pipes = [];
         frameCount = 0;
