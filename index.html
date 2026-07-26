@@ -11,7 +11,7 @@
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
-            padding: 0;
+            padding: 5px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -27,7 +27,7 @@
         }
         .container {
             background: transparent;
-            padding: 10px;
+            padding: 2px;
             text-align: center;
             width: 100%;
             height: 100%;
@@ -41,24 +41,24 @@
             touch-action: none;
         }
         h1 {
-            margin: 3px 0;
-            font-size: 22px;
+            margin: 2px 0;
+            font-size: 20px;
             color: #fff;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .user-info {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
-            padding: 4px 8px;
-            border-radius: 10px;
+            padding: 3px 6px;
+            border-radius: 8px;
             margin: 2px 0;
             font-size: 11px;
             text-align: left;
             color: #fff;
         }
         .status {
-            margin: 2px 0;
-            font-size: 10px;
+            margin: 1px 0;
+            font-size: 9px;
             color: #e2e8f0;
         }
         .score-container {
@@ -69,14 +69,14 @@
             margin: 2px 0;
         }
         .score {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             color: #fff;
             text-shadow: 0 3px 6px rgba(0,0,0,0.3);
         }
         .score-icon {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             object-fit: cover;
             box-shadow: 0 3px 6px rgba(0,0,0,0.3);
@@ -85,16 +85,17 @@
         .button-group {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
+            gap: 6px;
             justify-content: center;
             margin: 4px 0;
+            flex-shrink: 0;
         }
         .btn-primary {
-            padding: 8px 4px;
+            padding: 10px 6px;
             border: none;
             border-radius: 12px;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 12px;
             cursor: pointer;
             color: #fff;
             touch-action: manipulation;
@@ -102,24 +103,27 @@
             text-align: center;
             white-space: nowrap;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
         .info {
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             font-size: 10px;
             color: #cbd5e0;
+            flex-shrink: 0;
         }
 
         #gameCanvasContainer {
             position: relative;
             margin: auto;
             width: 320px;
-            height: 290px;
+            height: 270px;
             background: linear-gradient(to bottom, #4fd1c5, #63b3ed);
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             border: 3px solid rgba(255, 255, 255, 0.8);
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         canvas {
@@ -214,7 +218,7 @@
     </div>
 
     <div id="gameCanvasContainer">
-        <canvas id="flyCanvas" width="320" height="290"></canvas>
+        <canvas id="flyCanvas" width="320" height="270"></canvas>
     </div>
 
     <div>
@@ -402,7 +406,7 @@
         syncUserData();
     });
 
-    // --- ЛЕТАЮЩИЙ ТОМ ---
+    // --- ЛЕТАЮЩИЙ ТОМ (СУПЕР ЛЕГКИЙ РЕЖИМ) ---
     const canvas = document.getElementById('flyCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -411,17 +415,17 @@
 
     let cat = {
         x: 60,
-        y: 140,
-        size: 42,
-        gravity: 0.22,
-        lift: -4.8,
+        y: 130,
+        size: 40,
+        gravity: 0.18,    // Очень легкая гравитация
+        lift: -4.2,       // Мягкий и плавный прыжок
         velocity: 0
     };
 
     let pipes = [];
     let pipeWidth = 55;
-    let pipeGap = 110;
-    let pipeSpeed = 1.4;
+    let pipeGap = 135;    // ОГРОМНЫЙ проход между трубами — пролететь проще простого!
+    let pipeSpeed = 1.2;  // Медленная скорость движения
     let frameCount = 0;
     let gameOver = false;
 
@@ -438,7 +442,7 @@
     });
 
     function resetGame() {
-        cat.y = 140;
+        cat.y = 130;
         cat.velocity = 0;
         pipes = [];
         frameCount = 0;
@@ -454,9 +458,9 @@
                 gameOver = true;
             }
 
-            if (frameCount % 130 === 0) {
-                let minHeight = 50;
-                let maxHeight = canvas.height - pipeGap - 50;
+            if (frameCount % 140 === 0) {
+                let minHeight = 40;
+                let maxHeight = canvas.height - pipeGap - 40;
                 let topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
                 
                 pipes.push({
@@ -471,9 +475,9 @@
                 pipes[i].x -= pipeSpeed;
 
                 if (
-                    cat.x + cat.size > pipes[i].x + 6 &&
-                    cat.x < pipes[i].x + pipeWidth - 6 &&
-                    (cat.y + 6 < pipes[i].top || cat.y + cat.size - 6 > canvas.height - pipes[i].bottom)
+                    cat.x + cat.size > pipes[i].x + 8 &&
+                    cat.x < pipes[i].x + pipeWidth - 8 &&
+                    (cat.y + 8 < pipes[i].top || cat.y + cat.size - 8 > canvas.height - pipes[i].bottom)
                 ) {
                     gameOver = true;
                 }
