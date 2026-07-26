@@ -139,7 +139,7 @@
             position: relative;
             margin: auto;
             width: 320px;
-            height: 270px;
+            height: 330px; /* Увеличенная высота игрового экрана */
             background: linear-gradient(to bottom, #4fd1c5, #63b3ed);
             border-radius: 16px;
             overflow: hidden;
@@ -165,33 +165,34 @@
             height: 100%;
             background-color: rgba(0,0,0,0.6);
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Подтягиваем модальное окно выше */
+            padding-top: 30px; /* Отступ сверху */
         }
         .modal-content {
             background-color: #fff;
-            padding: 20px;
+            padding: 16px;
             border-radius: 20px;
             width: 90%;
             max-width: 350px;
             text-align: left;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
-        /* Умеренные, аккуратные размеры эмодзи в разделе друзей */
+        /* Увеличенные эмодзи и текст в модальном окне друзей */
         .reward-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
-            font-size: 14px;
+            font-size: 16px; /* Увеличенный текст списка */
         }
         .reward-item span {
-            font-size: 15px; /* Аккуратный размер текста и эмодзи слева */
+            font-size: 20px; /* Крупные эмодзи слева */
         }
         .reward-item b {
-            font-size: 14px; /* Аккуратный размер монет справа */
+            font-size: 16px; /* Крупные монеты справа */
         }
         .task-item {
             background: #f7fafc;
@@ -248,9 +249,9 @@
         </div>
     </div>
 
-    <!-- Главный экран: Тапалка (Летающий Том) -->
+    <!-- Главный экран: Тапалка (Летающий Том) с увеличенной высотой -->
     <div id="gameCanvasContainer">
-        <canvas id="flyCanvas" width="320" height="270"></canvas>
+        <canvas id="flyCanvas" width="320" height="330"></canvas>
     </div>
 
     <div>
@@ -304,14 +305,14 @@
     </div>
 </div>
 
-<!-- Модальное окно: Друзья -->
+<!-- Модальное окно: Друзья (с увеличенными эмодзи) -->
 <div id="inviteModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0; text-align:center; color:#2b6cb0; font-size: 20px;">🎁 Награды за друзей</h3>
-        <div style="background: #eef2f7; padding: 10px; border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 14px;">
-            <span>👥</span> Приглашено друзей: <strong id="invitedCount" style="color: #2b6cb0; font-size: 16px;">0</strong>
+        <h3 style="margin-top:0; text-align:center; color:#2b6cb0; font-size: 21px;">🎁 Награды за друзей</h3>
+        <div style="background: #eef2f7; padding: 10px; border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 15px;">
+            <span style="font-size: 22px;">👥</span> Приглашено друзей: <strong id="invitedCount" style="color: #2b6cb0; font-size: 18px;">0</strong>
         </div>
-        <p style="font-size:13px; color:#666; text-align:center; margin-top:0;">Приглашайте друзей и забирайте бонусы:</p>
+        <p style="font-size:14px; color:#666; text-align:center; margin-top:0;">Приглашайте друзей и забирайте бонусы:</p>
         <div id="rewardsList">
             <div class="reward-item"><span>👥 1 друг:</span> <b>+500 🪙</b></div>
             <div class="reward-item"><span>👥 2 друга:</span> <b>+1,200 🪙</b></div>
@@ -368,7 +369,7 @@
 <script>
     // НАСТРОЙКИ SUPABASE
     const SUPABASE_URL = 'https://iwkpkvnpmokbeddxyjrk.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3a3Brdm5wbW9rYmVkZHh5anJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNjI4NzgsImV4cCI6MjEwMDYzODg3OH0.i_wH6jXOVH3evWeGzDpWeIFiAAZa2BIWNgGMFGQ3S6E';
+    const SUPABASE_KEY = 'ВАШ_ANON_KEY';
     
     let supabaseClient = null;
     try {
