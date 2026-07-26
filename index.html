@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RX Empire</title>
     <style>
         body {
@@ -16,9 +16,11 @@
             justify-content: center;
             min-height: 100vh;
             color: #333;
-            touch-action: manipulation;
+            /* Полностью убираем зум и жесты масштабирования */
+            touch-action: none;
             box-sizing: border-box;
             user-select: none;
+            -webkit-user-select: none;
         }
         .container {
             background: #fff;
@@ -29,8 +31,9 @@
             width: 100%;
             max-width: 420px;
             box-sizing: border-box;
-            position: relative; /* Важно для привязки летящих цифр */
+            position: relative;
             overflow: hidden;
+            touch-action: none;
         }
         h1 {
             margin: 0 0 10px 0;
@@ -70,6 +73,7 @@
             font-size: 14px;
             cursor: pointer;
             color: #fff;
+            touch-action: manipulation;
         }
         .btn-primary {
             background: #6b46c1;
@@ -84,7 +88,7 @@
             color: #718096;
         }
 
-        /* Зона клика и анимация подпрыгивания */
+        /* Зона клика и пружинящая анимация */
         #clickArea {
             cursor: pointer;
             display: inline-block;
@@ -92,11 +96,11 @@
             width: 180px;
             height: 180px;
             border-radius: 50%;
-            touch-action: manipulation;
+            touch-action: none;
             transition: transform 0.05s ease;
         }
         #clickArea:active {
-            transform: scale(0.90); /* Сильное сжатие при клике */
+            transform: scale(0.90);
         }
 
         #clickArea img {
@@ -109,7 +113,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
 
-        /* Эффект вылетающей монетки (+1) прямо из точки касания */
+        /* Эффект вылетающей монетки (+1) */
         .floating-number {
             position: absolute;
             font-size: 24px;
@@ -186,6 +190,7 @@
             font-size: 12px;
             cursor: pointer;
             font-weight: bold;
+            touch-action: manipulation;
         }
     </style>
 </head>
@@ -329,11 +334,16 @@
         updateScoreDisplay();
     }
 
-    // Обработка клика и тапа с точным появлением "+1"
+    // Блокируем стандартный зум по двойному тапу
+    clickArea.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+    });
+
+    // Обработка тапов (поддерживает мультитач — можно кликать несколькими пальцами сразу)
     clickArea.addEventListener('pointerdown', (e) => {
+        e.preventDefault(); // Предотвращает дефолтные жесты зума/скролла
         addCoins(1);
 
-        // Получаем координаты относительно игрового контейнера
         const containerRect = container.getBoundingClientRect();
         const x = e.clientX - containerRect.left;
         const y = e.clientY - containerRect.top;
