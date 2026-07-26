@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RX Empire</title>
-    <!-- Подключаем Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -237,7 +236,6 @@
         </div>
     </div>
 
-    <!-- Главный экран: Тапалка (Летающий Том) -->
     <div id="gameCanvasContainer">
         <canvas id="flyCanvas" width="320" height="270"></canvas>
     </div>
@@ -282,13 +280,11 @@
     </div>
 </div>
 
-<!-- Модальное окно: Мини-игры (С летящей монетой / Flappy Coin) -->
 <div id="gamesModal" class="modal">
     <div class="modal-content" style="text-align: center;">
         <h3 style="margin-top:0; color:#805ad5;">🎮 Мини-игра: Летающая монета</h3>
-        <p style="font-size:12px; color:#666; margin-bottom: 8px;">Тапай, проводи монету сквозь препятствия и зарабатывай бонусы!</p>
+        <p style="font-size:12px; color:#666; margin-bottom: 8px;">Тапай, проводи крупную монету сквозь препятствия!</p>
         
-        <!-- Мини-холст для игры с монетой -->
         <div style="position: relative; margin: 0 auto 12px auto; width: 280px; height: 200px; background: linear-gradient(to bottom, #667eea, #764ba2); border-radius: 12px; overflow: hidden; border: 2px solid #fff;">
             <canvas id="coinCanvas" width="280" height="200" style="width: 100%; height: 100%; display: block; cursor: pointer;"></canvas>
         </div>
@@ -297,7 +293,6 @@
     </div>
 </div>
 
-<!-- Модальное окно: Друзья -->
 <div id="inviteModal" class="modal">
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center; color:#2b6cb0;">🎁 Награды за друзей</h3>
@@ -324,7 +319,6 @@
     </div>
 </div>
 
-<!-- Модальное окно: Задания -->
 <div id="taskModal" class="modal">
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center; color:#d69e2e;">⭐ Доступные задания</h3>
@@ -343,7 +337,6 @@
     </div>
 </div>
 
-<!-- Модальное окно: Топ игроков -->
 <div id="leaderboardModal" class="modal">
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center; color:#e53e3e;">🏆 Таблица лидеров</h3>
@@ -584,22 +577,22 @@
     }
 
 
-    // --- МИНИ-ИГРА: ЛЕТАЮЩАЯ МОНЕТА (В ОКНЕ МИНИ-ИГР) ---
+    // --- МИНИ-ИГРА: КРУПНАЯ ЛЕТАЮЩАЯ МОНЕТА (ПО ЦЕНТРУ) ---
     const coinCanvas = document.getElementById('coinCanvas');
     const coinCtx = coinCanvas.getContext('2d');
 
     let coinObj = {
         x: 50,
-        y: 100,
-        size: 32,
-        gravity: 0.2,
-        lift: -4.0,
+        y: 80,           // Начальная позиция по центру экрана (высота холста 200, середина около 80-100)
+        size: 46,        // Сделали монетку заметно крупнее (было 32)
+        gravity: 0.18,
+        lift: -4.2,
         velocity: 0
     };
 
     let coinPipes = [];
     let coinPipeWidth = 45;
-    let coinPipeGap = 100;
+    let coinPipeGap = 105;
     let coinPipeSpeed = 1.3;
     let coinFrameCount = 0;
     let coinGameOver = false;
@@ -618,7 +611,7 @@
     });
 
     function resetCoinGame() {
-        coinObj.y = 100;
+        coinObj.y = 80;    // Сбрасываем ровно в середину
         coinObj.velocity = 0;
         coinPipes = [];
         coinFrameCount = 0;
@@ -684,7 +677,7 @@
             coinCtx.fillRect(coinPipes[i].x, coinCanvas.height - coinPipes[i].bottom, coinPipeWidth, coinPipes[i].bottom);
         }
 
-        // Летающая монета
+        // Крупная летающая монета
         coinCtx.save();
         coinCtx.translate(coinObj.x + coinObj.size/2, coinObj.y + coinObj.size/2);
         let rot = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, coinObj.velocity * 0.08));
