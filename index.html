@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RX Empire</title>
+    <!-- Подключаем библиотеку Supabase для таблицы лидеров -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -81,16 +83,16 @@
         }
         .button-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             justify-content: center;
             margin: 5px 0;
         }
         .btn-primary {
-            padding: 14px 8px;
+            padding: 12px 6px;
             border: none;
             border-radius: 14px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
             cursor: pointer;
             color: #fff;
             touch-action: manipulation;
@@ -210,6 +212,13 @@
             font-weight: bold;
             touch-action: manipulation;
         }
+        .leader-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -227,7 +236,7 @@
             ⏳ Initializing Telegram Web App...
         </div>
 
-        <!-- Баланс с вашим логотипом вместо орла -->
+        <!-- Баланс с логотипом RX -->
         <div class="score-container">
             <span class="score" id="score">0</span>
             <img src="RX-Empire.png" alt="RX" class="score-icon">
@@ -246,10 +255,11 @@
             <span style="font-size: 11px; color: #e2e8f0;">Обменивай игровые монеты на реальные деньги!</span>
         </div>
 
-        <!-- Три кнопки в самом низу в ряд -->
+        <!-- Четыре кнопки в самом низу в ряд -->
         <div class="button-group">
             <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">👥 Друзья</button>
             <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e;">⭐ Задания</button>
+            <button class="btn-primary" onclick="openLeaderboardModal()" style="background: #e53e3e;">🏆 Топ</button>
             <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169;">💸 Вывести</button>
         </div>
 
@@ -312,8 +322,29 @@
     </div>
 </div>
 
+<!-- Модальное окно: Топ игроков -->
+<div id="leaderboardModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; text-align:center; color:#e53e3e;">🏆 Таблица лидеров</h3>
+        <p style="font-size:12px; color:#666; text-align:center;">Самые успешные игроки RX Empire:</p>
+        
+        <div id="leadersList" style="max-height: 250px; overflow-y: auto;">
+            <div style="text-align:center; font-size:13px; color:#666; padding: 15px;">Загрузка...</div>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <button class="btn-primary" onclick="closeLeaderboardModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px;">Закрыть</button>
+        </div>
+    </div>
+</div>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
+    // НАСТРОЙКИ SUPABASE (Замените на свои данные из проекта Supabase, когда создадите таблицу "players")
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabaseClient = (SUPABASE_URL !== 'YOUR_SUPABASE_URL') ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
     const tg = window.Telegram.WebApp;
 
     if (tg) {
@@ -323,11 +354,15 @@
 
     const user = tg.initDataUnsafe?.user;
     const statusEl = document.getElementById('status');
+    let userName = 'User';
+    let userId = 'local_' + Math.floor(Math.random() * 100000);
 
     if (user) {
         document.getElementById('userInfo').style.display = 'block';
-        document.getElementById('userName').textContent = user.first_name || 'User';
-        document.getElementById('userId').textContent = user.id || '-';
+        userName = user.first_name || 'User';
+        userId = String(user.id);
+        document.getElementById('userName').textContent = userName;
+        document.getElementById('userId').textContent = userId;
         statusEl.textContent = '✅ Connected to Telegram!';
     } else {
         statusEl.textContent = '⚠️ Not running in Telegram';
@@ -354,6 +389,22 @@
     function addCoins(amount) {
         score += amount;
         updateScoreDisplay();
+        syncUserData(); // Синхронизируем с облаком при изменении счета
+    }
+
+    // Синхронизация данных игрока с базой Supabase
+    async function syncUserData() {
+        if (!supabaseClient) return;
+        try {
+            await supabaseClient.from('players').upsert({
+                user_id: userId,
+                name: userName,
+                score: score,
+                updated_at: new Date()
+            }, { onConflict: 'user_id' });
+        } catch (e) {
+            console.error('Sync error:', e);
+        }
     }
 
     window.addEventListener('load', () => {
@@ -368,6 +419,7 @@
         }
         updateScoreDisplay();
         updateInvitedDisplay();
+        syncUserData();
     });
 
     clickArea.addEventListener('dblclick', (e) => {
@@ -404,7 +456,6 @@
     }
 
     function shareInviteLink() {
-        const userId = user ? user.id : 'my_id';
         const botUsername = 'YOUR_BOT_USERNAME'; 
         const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=Играй со мной в RX Empire и зарабатывай монеты! 🚀`;
         
@@ -421,6 +472,53 @@
     }
     function closeTaskModal() {
         document.getElementById('taskModal').style.display = 'none';
+    }
+
+    // Открытие таблицы лидеров
+    async function openLeaderboardModal() {
+        document.getElementById('leaderboardModal').style.display = 'flex';
+        const listContainer = document.getElementById('leadersList');
+        
+        if (!supabaseClient) {
+            listContainer.innerHTML = `<div style="text-align:center; font-size:12px; color:#e53e3e; padding: 15px;">⚠️ База данных не настроена.<br>Укажите параметры Supabase в коде.</div>`;
+            return;
+        }
+
+        listContainer.innerHTML = `<div style="text-align:center; font-size:13px; color:#666; padding: 15px;">Загрузка...</div>`;
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('players')
+                .select('name, score')
+                .order('score', { ascending: false })
+                .limit(10);
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                listContainer.innerHTML = `<div style="text-align:center; font-size:13px; color:#666; padding: 15px;">Пока нет игроков</div>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach((player, index) => {
+                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                html += `
+                    <div class="leader-row">
+                        <span>${medal} <strong>${player.name}</strong></span>
+                        <span style="color:#d69e2e; font-weight:bold;">${player.score} 🪙</span>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            listContainer.innerHTML = `<div style="text-align:center; font-size:12px; color:#e53e3e; padding: 15px;">Ошибка загрузки лидеров</div>`;
+        }
+    }
+
+    function closeLeaderboardModal() {
+        document.getElementById('leaderboardModal').style.display = 'none';
     }
 
     let taskSteps = JSON.parse(localStorage.getItem('taskSteps')) || { 1: 0, 2: 0 };
@@ -478,7 +576,6 @@
             alert(`❌ Недостаточно монет для вывода!\nМинимальная сумма: ${minCoins} монет.`);
         } else {
             const adminUsername = 'RX_Empire_bot'; 
-            const userId = user ? user.id : 'unknown';
             const withdrawUrl = `https://t.me/${adminUsername}?text=Здравствуйте! Я хочу обменять свои ${score} монеты RX Empire на сомони. Мой ID: ${userId}`;
             
             if (window.Telegram && window.Telegram.WebApp) {
