@@ -82,7 +82,8 @@
             border: 2px solid rgba(255, 255, 255, 0.8);
         }
         .button-group {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 6px;
             justify-content: center;
             margin: 5px 0;
@@ -97,7 +98,6 @@
             color: #fff;
             touch-action: manipulation;
             background: #6b46c1;
-            flex: 1;
             text-align: center;
             white-space: nowrap;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -252,13 +252,36 @@
         <div class="button-group">
             <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">👥 Друзья</button>
             <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e;">⭐ Задания</button>
+            <button class="btn-primary" onclick="openGamesModal()" style="background: #805ad5;">🎮 Мини-игры</button>
             <button class="btn-primary" onclick="openLeaderboardModal()" style="background: #e53e3e;">🏆 Топ</button>
-            <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169;">💸 Вывести</button>
+            <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169; grid-column: span 2;">💸 Вывести</button>
         </div>
 
         <div class="info">
             Click the circle to earn coins!
         </div>
+    </div>
+</div>
+
+<!-- Модальное окно: Мини-игры -->
+<div id="gamesModal" class="modal">
+    <div class="modal-content" style="text-align: center;">
+        <h3 style="margin-top:0; color:#805ad5;">🎮 Игровая зона</h3>
+        <p style="font-size:12px; color:#666;">Испытай удачу и выиграй бонусные монеты!</p>
+        
+        <div style="background: #f7fafc; padding: 15px; border-radius: 14px; margin-bottom: 12px;">
+            <div style="font-weight: bold; font-size: 14px; color: #2d3748; margin-bottom: 8px;">🎲 Угадай число (1 - 3)</div>
+            <p style="font-size: 11px; color: #718096; margin-top: 0;">Стоимость игры: 100 монет. При выигрыше: +300 монет!</p>
+            <div style="display: flex; gap: 6px; justify-content: center; margin-top: 10px;">
+                <button class="btn-primary" onclick="playGuessGame(1)" style="background: #3182ce; padding: 10px 15px;">1</button>
+                <button class="btn-primary" onclick="playGuessGame(2)" style="background: #3182ce; padding: 10px 15px;">2</button>
+                <button class="btn-primary" onclick="playGuessGame(3)" style="background: #3182ce; padding: 10px 15px;">3</button>
+            </div>
+        </div>
+
+        <div id="gameResultText" style="font-size: 13px; font-weight: bold; margin-bottom: 15px; color: #2b6cb0; min-height: 20px;"></div>
+
+        <button class="btn-primary" onclick="closeGamesModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px;">Закрыть</button>
     </div>
 </div>
 
@@ -324,9 +347,9 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // НАСТРОЙКИ SUPABASE (вставьте свои данные аккуратно)
+    // НАСТРОЙКИ SUPABASE
     const SUPABASE_URL = 'https://iwkpkvnpmokbeddxyjrk.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3a3Brdm5wbW9rYmVkZHh5anJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNjI4NzgsImV4cCI6MjEwMDYzODg3OH0.i_wH6jXOVH3evWeGzDpWeIFiAAZa2BIWNgGMFGQ3S6E';
+    const SUPABASE_KEY = 'ВАШ_ANON_KEY';
     
     let supabaseClient = null;
     try {
@@ -437,6 +460,42 @@
         }, 700);
     });
 
+    // Мини-игра функции
+    function openGamesModal() {
+        document.getElementById('gamesModal').style.display = 'flex';
+        document.getElementById('gameResultText').textContent = '';
+    }
+    function closeGamesModal() {
+        document.getElementById('gamesModal').style.display = 'none';
+    }
+
+    function playGuessGame(chosenNum) {
+        const cost = 100;
+        const reward = 300;
+        const resultText = document.getElementById('gameResultText');
+
+        if (score < cost) {
+            resultText.style.color = '#e53e3e';
+            resultText.textContent = '❌ Недостаточно монет (нужно 100)!';
+            return;
+        }
+
+        score -= cost;
+        updateScoreDisplay();
+
+        const winningNum = Math.floor(Math.random() * 3) + 1;
+
+        if (chosenNum === winningNum) {
+            score += reward;
+            updateScoreDisplay();
+            resultText.style.color = '#38a169';
+            resultText.textContent = `🎉 Победа! Вы угадали число ${winningNum} и выиграли +${reward} монет!`;
+        } else {
+            resultText.style.color = '#e53e3e';
+            resultText.textContent = `😢 Не угадали. Бот загадал число ${winningNum}. Попробуйте еще раз!`;
+        }
+    }
+
     function openInviteModal() {
         updateInvitedDisplay();
         document.getElementById('inviteModal').style.display = 'flex';
@@ -469,7 +528,7 @@
         const listContainer = document.getElementById('leadersList');
 
         if (!supabaseClient) {
-            listContainer.innerHTML = `<div style="text-align:center; font-size:12px; color:#e53e3e; padding: 15px;">⚠️ База данных не подключена (проверьте ключ).</div>`;
+            listContainer.innerHTML = `<div style="text-align:center; font-size:12px; color:#e53e3e; padding: 15px;">⚠️ База данных не подключена.</div>`;
             return;
         }
 
@@ -515,7 +574,7 @@
     function checkTaskStates() {
         for (let id = 1; id <= 2; id++) {
             const btn = document.getElementById(`taskBtn${id}`);
-    if (taskSteps[id] === 1) {
+            if (taskSteps[id] === 1) {
                 btn.textContent = '✔️ Проверить';
                 btn.style.background = '#38a169';
                 btn.disabled = false;
