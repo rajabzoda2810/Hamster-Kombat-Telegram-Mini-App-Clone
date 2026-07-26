@@ -82,7 +82,7 @@
             box-shadow: 0 3px 6px rgba(0,0,0,0.3);
             border: 2px solid rgba(255, 255, 255, 0.8);
         }
-        /* Все 5 кнопок в одну линию */
+        /* Все 5 кнопок в один ряд */
         .button-group {
             display: flex;
             flex-direction: row;
@@ -178,20 +178,20 @@
             max-height: 80vh;
             overflow-y: auto;
         }
-        /* Увеличенные эмодзи и иконки в разделе друзей */
+        /* Умеренные, аккуратные размеры эмодзи в разделе друзей */
         .reward-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #eee;
-            font-size: 17px;
+            font-size: 14px;
         }
         .reward-item span {
-            font-size: 24px; /* Сильно увеличенные эмодзи слева */
+            font-size: 15px; /* Аккуратный размер текста и эмодзи слева */
         }
         .reward-item b {
-            font-size: 18px; /* Увеличенные монеты справа */
+            font-size: 14px; /* Аккуратный размер монет справа */
         }
         .task-item {
             background: #f7fafc;
@@ -304,14 +304,14 @@
     </div>
 </div>
 
-<!-- Модальное окно: Друзья (С увеличенными эмодзи) -->
+<!-- Модальное окно: Друзья -->
 <div id="inviteModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0; text-align:center; color:#2b6cb0; font-size: 22px;">🎁 Награды за друзей</h3>
-        <div style="background: #eef2f7; padding: 12px; border-radius: 12px; margin-bottom: 12px; text-align: center; font-size: 16px;">
-            <span style="font-size: 28px;">👥</span> Приглашено друзей: <strong id="invitedCount" style="color: #2b6cb0; font-size: 20px;">0</strong>
+        <h3 style="margin-top:0; text-align:center; color:#2b6cb0; font-size: 20px;">🎁 Награды за друзей</h3>
+        <div style="background: #eef2f7; padding: 10px; border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 14px;">
+            <span>👥</span> Приглашено друзей: <strong id="invitedCount" style="color: #2b6cb0; font-size: 16px;">0</strong>
         </div>
-        <p style="font-size:14px; color:#666; text-align:center; margin-top:0;">Приглашайте друзей и забирайте бонусы:</p>
+        <p style="font-size:13px; color:#666; text-align:center; margin-top:0;">Приглашайте друзей и забирайте бонусы:</p>
         <div id="rewardsList">
             <div class="reward-item"><span>👥 1 друг:</span> <b>+500 🪙</b></div>
             <div class="reward-item"><span>👥 2 друга:</span> <b>+1,200 🪙</b></div>
