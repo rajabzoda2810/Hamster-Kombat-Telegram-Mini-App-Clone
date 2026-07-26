@@ -58,12 +58,26 @@
             font-size: 11px;
             color: #e2e8f0;
         }
+        .score-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
         .score {
             font-size: 42px;
             font-weight: bold;
             color: #fff;
-            margin: 5px 0;
             text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        }
+        .score-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255, 255, 255, 0.8);
         }
         .button-group {
             display: flex;
@@ -213,8 +227,10 @@
             ⏳ Initializing Telegram Web App...
         </div>
 
-        <div class="score">
-            <span id="score">0</span> 🪙
+        <!-- Баланс с вашим логотипом вместо орла -->
+        <div class="score-container">
+            <span class="score" id="score">0</span>
+            <img src="RX-Empire.png" alt="RX" class="score-icon">
         </div>
     </div>
 
@@ -407,7 +423,7 @@
         document.getElementById('taskModal').style.display = 'none';
     }
 
-    let taskSteps = JSON.path ? JSON.parse(localStorage.getItem('taskSteps')) : (JSON.parse(localStorage.getItem('taskSteps')) || { 1: 0, 2: 0 });
+    let taskSteps = JSON.parse(localStorage.getItem('taskSteps')) || { 1: 0, 2: 0 };
 
     function checkTaskStates() {
         for (let id = 1; id <= 2; id++) {
@@ -441,20 +457,18 @@
             }
             
             alert('📢 Перейдите по ссылке, выполните задание, затем вернитесь и нажмите "Проверить"!');
-        } else id = taskId, taskSteps[taskId] === 1; { // safe fallback execution
-            if (taskSteps[taskId] === 1) {
-                taskSteps[taskId] = 2;
-                localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
+        } else if (taskSteps[taskId] === 1) {
+            taskSteps[taskId] = 2;
+            localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
 
-                const reward = taskId === 1 ? 500 : 1000;
-                addCoins(reward);
+            const reward = taskId === 1 ? 500 : 1000;
+            addCoins(reward);
 
-                btn.textContent = '✅ Выполнено';
-                btn.style.background = '#718096';
-                btn.disabled = true;
+            btn.textContent = '✅ Выполнено';
+            btn.style.background = '#718096';
+            btn.disabled = true;
 
-                alert(`🎉 Поздравляем! Задание выполнено, вам начислено +${reward} монет!`);
-            }
+            alert(`🎉 Поздравляем! Задание выполнено, вам начислено +${reward} монет!`);
         }
     }
 
