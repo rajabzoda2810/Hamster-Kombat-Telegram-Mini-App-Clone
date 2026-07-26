@@ -182,7 +182,7 @@
     // Функция приглашения друзей
     function inviteFriend() {
         const userId = user ? user.id : '';
-        const botUsername = 'YOUR_BOT_USERNAME'; // Укажите вашего бота без @
+        const botUsername = 'RX_Empire_bot'; // Укажите вашего бота без @
         const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=Играй со мной в RX Empire и зарабатывай монеты! 🚀`;
         
         if (tg && tg.openTelegramLink) {
@@ -193,15 +193,19 @@
     }
 
     // Функция заданий (исправленная для открытия канала)
-    function openTask() {
-        const channelUrl = 'https://t.me//rx_empire_channel'; // Замените на ссылку вашего канала
-        
-        if (tg && tg.openTelegramLink) {
-            tg.openTelegramLink(channelUrl);
-        } else {
-            window.open(channelUrl, '_blank');
-        }
+   function openTask() {
+    const channelUrl = 'https://t.me/rx_empire_channel';
+    
+    // Начисляем бонусные монеты за задание
+    addCoins(500);
+    
+    // Безопасное открытие ссылки в Telegram
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openTelegramLink(channelUrl);
+    } else {
+        window.open(channelUrl, '_blank');
     }
+}
 
     // Функция вывода в сомони
     function openWithdrawModal() {
