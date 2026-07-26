@@ -16,7 +16,6 @@
             justify-content: center;
             min-height: 100vh;
             color: #333;
-            /* Полностью убираем зум и жесты масштабирования */
             touch-action: none;
             box-sizing: border-box;
             user-select: none;
@@ -54,10 +53,10 @@
             color: #555;
         }
         .score {
-            font-size: 38px;
+            font-size: 42px;
             font-weight: bold;
             color: #4a5568;
-            margin: 10px 0;
+            margin: 15px 0;
         }
         .button-group {
             display: flex;
@@ -65,7 +64,7 @@
             justify-content: center;
             margin: 8px 0;
         }
-        .btn-primary, .btn-secondary {
+        .btn-primary {
             padding: 12px;
             border: none;
             border-radius: 12px;
@@ -74,13 +73,7 @@
             cursor: pointer;
             color: #fff;
             touch-action: manipulation;
-        }
-        .btn-primary {
             background: #6b46c1;
-        }
-        .btn-secondary {
-            background: #cbd5e0;
-            color: #333;
         }
         .info {
             margin-top: 10px;
@@ -217,15 +210,8 @@
         <img src="RX-Empire.png" alt="RX Empire">
     </div>
 
-    <!-- Кнопки управления монетами -->
-    <div class="button-group">
-        <button class="btn-primary" style="flex: 1;" onclick="addCoins(100)">+100</button>
-        <button class="btn-primary" style="flex: 1;" onclick="addCoins(1000)">+1000</button>
-        <button class="btn-secondary" style="flex: 1;" onclick="resetScore()">Reset</button>
-    </div>
-
     <!-- Кнопки Друзья и Задания -->
-    <div class="button-group" style="margin-top: 8px;">
+    <div class="button-group" style="margin-top: 10px;">
         <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce; flex: 1; font-size: 15px;">👥 Друзья</button>
         <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e; flex: 1; font-size: 15px;">⭐ Задания</button>
     </div>
@@ -241,7 +227,7 @@
     </div>
 
     <div class="info">
-        Click the circle or use buttons to earn coins!
+        Click the circle to earn coins!
     </div>
 </div>
 
@@ -266,7 +252,7 @@
 
         <div style="margin-top: 15px; display: flex; gap: 8px;">
             <button class="btn-primary" onclick="shareInviteLink()" style="background: #3182ce; flex: 1; font-size: 13px;">🔗 Поделиться</button>
-            <button class="btn-secondary" onclick="closeInviteModal()" style="flex: 1; font-size: 13px;">Закрыть</button>
+            <button class="btn-primary" onclick="closeInviteModal()" style="background: #cbd5e0; color: #333; flex: 1; font-size: 13px;">Закрыть</button>
         </div>
     </div>
 </div>
@@ -288,7 +274,7 @@
         </div>
 
         <div style="margin-top: 15px;">
-            <button class="btn-secondary" onclick="closeTaskModal()" style="width: 100%; font-size: 13px;">Закрыть</button>
+            <button class="btn-primary" onclick="closeTaskModal()" style="background: #cbd5e0; color: #333; width: 100%; font-size: 13px;">Закрыть</button>
         </div>
     </div>
 </div>
@@ -329,19 +315,14 @@
         updateScoreDisplay();
     }
 
-    function resetScore() {
-        score = 0;
-        updateScoreDisplay();
-    }
-
     // Блокируем стандартный зум по двойному тапу
     clickArea.addEventListener('dblclick', (e) => {
         e.preventDefault();
     });
 
-    // Обработка тапов (поддерживает мультитач — можно кликать несколькими пальцами сразу)
+    // Обработка тапов по кругу
     clickArea.addEventListener('pointerdown', (e) => {
-        e.preventDefault(); // Предотвращает дефолтные жесты зума/скролла
+        e.preventDefault();
         addCoins(1);
 
         const containerRect = container.getBoundingClientRect();
