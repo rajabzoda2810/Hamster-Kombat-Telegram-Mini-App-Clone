@@ -81,7 +81,7 @@
             color: #718096;
         }
 
-        /* Модальное окно */
+        /* Модальные окна */
         .modal {
             display: none;
             position: fixed;
@@ -112,6 +112,30 @@
             border-bottom: 1px solid #eee;
             font-size: 13px;
         }
+        .task-item {
+            background: #f7fafc;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .task-info {
+            font-size: 13px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .task-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            background: #3182ce;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -132,21 +156,25 @@
         <span id="score">0</span> 🪙
     </div>
 
+    <!-- Зона клика с картинкой -->
     <div id="clickArea" style="cursor: pointer; display: flex; justify-content: center; align-items: center; margin: 15px auto; width: 190px; height: 190px; touch-action: manipulation;">
         <img src="RX-Empire.png" alt="RX Empire" style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; user-select: none; pointer-events: none;">
     </div>
 
+    <!-- Кнопки управления монетами -->
     <div class="button-group">
         <button class="btn-primary" style="flex: 1;" onclick="addCoins(100)">+100</button>
         <button class="btn-primary" style="flex: 1;" onclick="addCoins(1000)">+1000</button>
         <button class="btn-secondary" style="flex: 1;" onclick="resetScore()">Reset</button>
     </div>
 
+    <!-- Кнопки Друзья и Задания -->
     <div class="button-group" style="margin-top: 8px;">
         <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce; flex: 1; font-size: 15px;">👥 Друзья</button>
-        <button class="btn-primary" onclick="openTask()" style="background: #d69e2e; flex: 1; font-size: 15px;">⭐ Задания</button>
+        <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e; flex: 1; font-size: 15px;">⭐ Задания</button>
     </div>
 
+    <!-- Инфо о конвертации и вывод -->
     <div class="user-info" style="background: #fffaf0; border-left: 4px solid #dd6b20; margin: 10px 0; text-align: left;">
         💰 <strong>Конвертация:</strong> 10 000 монет = 1 Сомони<br>
         <span style="font-size: 11px; color: #718096;">Обменивай игровые монеты на реальные деньги!</span>
@@ -161,6 +189,7 @@
     </div>
 </div>
 
+<!-- Модальное окно: Друзья -->
 <div id="inviteModal" class="modal">
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center; color:#2b6cb0;">🎁 Награды за друзей</h3>
@@ -180,8 +209,32 @@
         </div>
 
         <div style="margin-top: 15px; display: flex; gap: 8px;">
-            <button class="btn-primary" onclick="shareInviteLink()" style="background: #3182ce; flex: 1; font-size: 13px;">🔗 Поделиться ссылкой</button>
+            <button class="btn-primary" onclick="shareInviteLink()" style="background: #3182ce; flex: 1; font-size: 13px;">🔗 Поделиться</button>
             <button class="btn-secondary" onclick="closeInviteModal()" style="flex: 1; font-size: 13px;">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно: Задания -->
+<div id="taskModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; text-align:center; color:#d69e2e;">⭐ Доступные задания</h3>
+        <p style="font-size:12px; color:#666; text-align:center;">Выполняйте задания и получайте монеты:</p>
+        
+        <!-- Задание 1: Подписка на Телеграм канал -->
+        <div class="task-item">
+            <div class="task-info">📢 Подписка на Telegram-канал (+500 монет)</div>
+            <button id="taskBtn1" class="task-btn" onclick="handleTask(1, 'https://t.me/rx_empire_channel')">Выполнить</button>
+        </div>
+
+        <!-- Задание 2: Переход на YouTube -->
+        <div class="task-item">
+            <div class="task-info">📺 Подписка / Просмотр YouTube (+1,000 монет)</div>
+            <button id="taskBtn2" class="task-btn" onclick="handleTask(2, 'https://youtube.com')">Выполнить</button>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <button class="btn-secondary" onclick="closeTaskModal()" style="width: 100%; font-size: 13px;">Закрыть</button>
         </div>
     </div>
 </div>
@@ -232,19 +285,17 @@
 
     updateScoreDisplay();
 
-    // Функции модального окна друзей
+    // Управление модальным окном друзей
     function openInviteModal() {
         document.getElementById('inviteModal').style.display = 'flex';
     }
-
     function closeInviteModal() {
         document.getElementById('inviteModal').style.display = 'none';
     }
 
-    // Отправка реферальной ссылки
     function shareInviteLink() {
         const userId = user ? user.id : '';
-        const botUsername = 'RX_Empire_bot'; // Замените на юзернейм вашего бота без @
+        const botUsername = 'YOUR_BOT_USERNAME'; // Замените на юзернейм вашего бота
         const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=Играй со мной в RX Empire и зарабатывай монеты! 🚀`;
         
         if (window.Telegram && window.Telegram.WebApp) {
@@ -254,53 +305,65 @@
         }
     }
 
-    // Функция заданий (подписка на канал)
-        // Состояние задания (сохраняется, чтобы бонус не получали бесконечно)
-    let taskCompleted = localStorage.getItem('taskCompleted') === 'true';
-    let taskStarted = false;
+    // Управление модальным окном заданий
+    function openTaskModal() {
+        document.getElementById('taskModal').style.display = 'flex';
+        checkTaskStates();
+    }
+    function closeTaskModal() {
+        document.getElementById('taskModal').style.display = 'none';
+    }
 
-    function openTask() {
-        const btn = event ? event.target : null;
+    // Логика заданий с проверкой (шаг 1 -> переход, шаг 2 -> проверка и награда)
+    let taskSteps = JSON.parse(localStorage.getItem('taskSteps')) || { 1: 0, 2: 0 }; // 0 - не начато, 1 - перешел, 2 - выполнено
 
-        if (taskCompleted) {
-            alert('✅ Вы уже выполнили это задание и получили бонус!');
-            return;
-        }
-
-        const channelUrl = 'https://t.me/rx_empire_channel';
-
-        if (!taskStarted) {
-            // Шаг 1: Открываем канал и меняем кнопку для проверки
-            taskStarted = true;
-            if (btn) {
-                btn.textContent = '✔️ Проверить подписку';
-                btn.style.background = '#38a169'; // Зеленый цвет
-            }
-
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.openTelegramLink(channelUrl);
-            } else {
-                window.open(channelUrl, '_blank');
-            }
-            
-            alert('📢 Подпишитесь на канал, а затем вернитесь сюда и нажмите кнопку еще раз для проверки!');
-        } else {
-            // Шаг 2: Проверка и начисление монет
-            taskCompleted = true;
-            localStorage.setItem('taskCompleted', 'true');
-            
-            addCoins(500);
-            
-            if (btn) {
+    function checkTaskStates() {
+        for (let id = 1; id <= 2; id++) {
+            const btn = document.getElementById(`taskBtn${id}`);
+            if (taskSteps[id] === 1) {
+                btn.textContent = '✔️ Проверить';
+                btn.style.background = '#38a169';
+            } else if (taskSteps[id] === 2) {
                 btn.textContent = '✅ Выполнено';
                 btn.style.background = '#718096';
                 btn.disabled = true;
             }
-
-            alert('🎉 Поздравляем! Подписка подтверждена, вам начислено +500 монет!');
         }
     }
 
+    function handleTask(taskId, url) {
+        const btn = document.getElementById(`taskBtn${taskId}`);
+
+        if (taskSteps[taskId] === 0) {
+            // Шаг 1: Открываем ссылку
+            taskSteps[taskId] = 1;
+            localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
+            
+            btn.textContent = '✔️ Проверить';
+            btn.style.background = '#38a169';
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+            
+            alert('📢 Перейдите по ссылке, подпишитесь/посмотрите, затем вернитесь и нажмите "Проверить" еще раз!');
+        } else if (taskSteps[taskId] === 1) {
+            // Шаг 2: Проверяем и выдаем монеты
+            taskSteps[taskId] = 2;
+            localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
+
+            const reward = taskId === 1 ? 500 : 1000;
+            addCoins(reward);
+
+            btn.textContent = '✅ Выполнено';
+            btn.style.background = '#718096';
+            btn.disabled = true;
+
+            alert(`🎉 Поздравляем! Задание выполнено, вам начислено +${reward} монет!`);
+        }
+    }
 
     // Функция вывода в сомони
     function openWithdrawModal() {
