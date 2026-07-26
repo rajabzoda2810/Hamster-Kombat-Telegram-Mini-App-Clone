@@ -9,12 +9,13 @@
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
-            padding: 10px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             min-height: 100vh;
+            min-height: 100dvh;
             color: #333;
             touch-action: none;
             box-sizing: border-box;
@@ -22,54 +23,60 @@
             -webkit-user-select: none;
         }
         .container {
-            background: #fff;
+            background: transparent;
             padding: 15px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             text-align: center;
             width: 100%;
-            max-width: 420px;
+            height: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
             touch-action: none;
         }
         h1 {
-            margin: 0 0 10px 0;
+            margin: 5px 0;
             font-size: 26px;
-            color: #222;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .user-info {
-            background: #eef2f7;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
             padding: 8px 12px;
-            border-radius: 10px;
-            margin: 10px 0;
+            border-radius: 12px;
+            margin: 5px 0;
             font-size: 13px;
             text-align: left;
+            color: #fff;
         }
         .status {
-            margin: 5px 0;
-            font-size: 12px;
-            color: #555;
+            margin: 2px 0;
+            font-size: 11px;
+            color: #e2e8f0;
         }
         .score {
             font-size: 42px;
             font-weight: bold;
-            color: #4a5568;
-            margin: 15px 0;
+            color: #fff;
+            margin: 5px 0;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
         }
         .button-group {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             justify-content: center;
-            margin: 8px 0;
+            margin: 5px 0;
         }
         .btn-primary {
-            padding: 12px 8px;
+            padding: 14px 8px;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             color: #fff;
             touch-action: manipulation;
@@ -77,48 +84,49 @@
             flex: 1;
             text-align: center;
             white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .info {
-            margin-top: 10px;
+            margin-bottom: 5px;
             font-size: 11px;
-            color: #718096;
+            color: #cbd5e0;
         }
 
         /* Зона клика и пружинящая анимация */
         #clickArea {
             cursor: pointer;
             display: inline-block;
-            margin: 15px auto;
-            width: 180px;
-            height: 180px;
+            margin: auto;
+            width: 210px;
+            height: 210px;
             border-radius: 50%;
             touch-action: none;
             transition: transform 0.05s ease;
         }
         #clickArea:active {
-            transform: scale(0.90);
+            transform: scale(0.92);
         }
 
         #clickArea img {
-            width: 180px;
-            height: 180px;
+            width: 210px;
+            height: 210px;
             border-radius: 50%;
             object-fit: cover;
             user-select: none;
             pointer-events: none;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         /* Эффект вылетающей монетки (+1) */
         .floating-number {
             position: absolute;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            color: #d69e2e;
+            color: #f6ad55;
             pointer-events: none;
             animation: floatUp 0.7s ease-out forwards;
             z-index: 100;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         @keyframes floatUp {
@@ -128,7 +136,7 @@
             }
             100% {
                 opacity: 0;
-                transform: translateY(-60px) scale(1.4);
+                transform: translateY(-70px) scale(1.4);
             }
         }
 
@@ -141,18 +149,18 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.6);
             justify-content: center;
             align-items: center;
         }
         .modal-content {
             background-color: #fff;
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 20px;
             width: 90%;
             max-width: 350px;
             text-align: left;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             max-height: 80vh;
             overflow-y: auto;
         }
@@ -166,7 +174,7 @@
         .task-item {
             background: #f7fafc;
             padding: 10px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-bottom: 10px;
             display: flex;
             flex-direction: column;
@@ -178,9 +186,9 @@
             color: #2d3748;
         }
         .task-btn {
-            padding: 6px 12px;
+            padding: 8px 12px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             background: #3182ce;
             color: white;
             font-size: 12px;
@@ -193,19 +201,21 @@
 <body>
 
 <div class="container" id="gameContainer">
-    <h1>🎮 RX_Empire</h1>
-    
-    <div id="userInfo" class="user-info" style="display: none;">
-        <div>👤 <strong>User:</strong> <span id="userName">Unknown</span></div>
-        <div>🆔 <strong>ID:</strong> <span id="userId">-</span></div>
-    </div>
+    <div>
+        <h1>🎮 RX_Empire</h1>
+        
+        <div id="userInfo" class="user-info" style="display: none;">
+            <div>👤 <strong>User:</strong> <span id="userName">Unknown</span></div>
+            <div>🆔 <strong>ID:</strong> <span id="userId">-</span></div>
+        </div>
 
-    <div class="status" id="status">
-        ⏳ Initializing Telegram Web App...
-    </div>
+        <div class="status" id="status">
+            ⏳ Initializing Telegram Web App...
+        </div>
 
-    <div class="score">
-        <span id="score">0</span> 🪙
+        <div class="score">
+            <span id="score">0</span> 🪙
+        </div>
     </div>
 
     <!-- Зона клика с картинкой -->
@@ -213,21 +223,23 @@
         <img src="RX-Empire.png" alt="RX Empire">
     </div>
 
-    <!-- Инфо о конвертации -->
-    <div class="user-info" style="background: #fffaf0; border-left: 4px solid #dd6b20; margin: 10px 0; text-align: left;">
-        💰 <strong>Конвертация:</strong> 10 000 монет = 1 Сомони<br>
-        <span style="font-size: 11px; color: #718096;">Обменивай игровые монеты на реальные деньги!</span>
-    </div>
+    <div>
+        <!-- Инфо о конвертации -->
+        <div class="user-info" style="background: rgba(255, 255, 255, 0.2); border-left: 4px solid #f6ad55; text-align: left; color: #fff;">
+            💰 <strong>Конвертация:</strong> 10 000 монет = 1 Сомони<br>
+            <span style="font-size: 11px; color: #e2e8f0;">Обменивай игровые монеты на реальные деньги!</span>
+        </div>
 
-    <!-- Три кнопки в самом низу в ряд -->
-    <div class="button-group" style="margin-top: 10px;">
-        <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">👥 Друзья</button>
-        <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e;">⭐ Задания</button>
-        <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169;">💸 Вывести</button>
-    </div>
+        <!-- Три кнопки в самом низу в ряд -->
+        <div class="button-group">
+            <button class="btn-primary" onclick="openInviteModal()" style="background: #3182ce;">👥 Друзья</button>
+            <button class="btn-primary" onclick="openTaskModal()" style="background: #d69e2e;">⭐ Задания</button>
+            <button class="btn-primary" onclick="openWithdrawModal()" style="background: #38a169;">💸 Вывести</button>
+        </div>
 
-    <div class="info">
-        Click the circle to earn coins!
+        <div class="info">
+            Click the circle to earn coins!
+        </div>
     </div>
 </div>
 
@@ -236,7 +248,6 @@
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center; color:#2b6cb0;">🎁 Награды за друзей</h3>
         
-        <!-- Счетчик приглашенных друзей -->
         <div style="background: #eef2f7; padding: 10px; border-radius: 10px; margin-bottom: 12px; text-align: center; font-size: 14px;">
             👥 Приглашено друзей: <strong id="invitedCount" style="color: #2b6cb0;">0</strong>
         </div>
@@ -329,14 +340,13 @@
         updateScoreDisplay();
     }
 
-    // Проверка реферального параметра старта (если пользователь перешел по чьей-то ссылке)
     window.addEventListener('load', () => {
         const startParam = tg.initDataUnsafe?.start_param;
         if (startParam && startParam.startsWith('ref_')) {
             const hasBeenReferenced = localStorage.getItem('hasBeenReferenced');
             if (!hasBeenReferenced) {
                 localStorage.setItem('hasBeenReferenced', 'true');
-                addCoins(500); // бонус за то, что перешел по реферальной ссылке
+                addCoins(500);
                 alert('🎉 Вы зарегистрировались по реферальной ссылке и получили +500 бонусов!');
             }
         }
@@ -344,12 +354,10 @@
         updateInvitedDisplay();
     });
 
-    // Блокируем стандартный зум по двойному тапу
     clickArea.addEventListener('dblclick', (e) => {
         e.preventDefault();
     });
 
-    // Обработка тапов по кругу
     clickArea.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         addCoins(1);
@@ -371,7 +379,6 @@
         }, 700);
     });
 
-    // Модалка друзей
     function openInviteModal() {
         updateInvitedDisplay();
         document.getElementById('inviteModal').style.display = 'flex';
@@ -382,7 +389,7 @@
 
     function shareInviteLink() {
         const userId = user ? user.id : 'my_id';
-        const botUsername = 'YOUR_BOT_USERNAME'; // Замените на юзернейм вашего бота
+        const botUsername = 'YOUR_BOT_USERNAME'; 
         const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=ref_${userId}&text=Играй со мной в RX Empire и зарабатывай монеты! 🚀`;
         
         if (window.Telegram && window.Telegram.WebApp) {
@@ -392,7 +399,6 @@
         }
     }
 
-    // Модалка заданий
     function openTaskModal() {
         document.getElementById('taskModal').style.display = 'flex';
         checkTaskStates();
@@ -401,7 +407,7 @@
         document.getElementById('taskModal').style.display = 'none';
     }
 
-    let taskSteps = JSON.parse(localStorage.getItem('taskSteps')) || { 1: 0, 2: 0 };
+    let taskSteps = JSON.path ? JSON.parse(localStorage.getItem('taskSteps')) : (JSON.parse(localStorage.getItem('taskSteps')) || { 1: 0, 2: 0 });
 
     function checkTaskStates() {
         for (let id = 1; id <= 2; id++) {
@@ -435,22 +441,23 @@
             }
             
             alert('📢 Перейдите по ссылке, выполните задание, затем вернитесь и нажмите "Проверить"!');
-        } else if (taskSteps[taskId] === 1) {
-            taskSteps[taskId] = 2;
-            localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
+        } else id = taskId, taskSteps[taskId] === 1; { // safe fallback execution
+            if (taskSteps[taskId] === 1) {
+                taskSteps[taskId] = 2;
+                localStorage.setItem('taskSteps', JSON.stringify(taskSteps));
 
-            const reward = taskId === 1 ? 500 : 1000;
-            addCoins(reward);
+                const reward = taskId === 1 ? 500 : 1000;
+                addCoins(reward);
 
-            btn.textContent = '✅ Выполнено';
-            btn.style.background = '#718096';
-            btn.disabled = true;
+                btn.textContent = '✅ Выполнено';
+                btn.style.background = '#718096';
+                btn.disabled = true;
 
-            alert(`🎉 Поздравляем! Задание выполнено, вам начислено +${reward} монет!`);
+                alert(`🎉 Поздравляем! Задание выполнено, вам начислено +${reward} монет!`);
+            }
         }
     }
 
-    // Вывод в сомони
     function openWithdrawModal() {
         const minCoins = 10000;
         if (score < minCoins) {
